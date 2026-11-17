@@ -1,12 +1,12 @@
-DemoReel 素材说明
+Showreel 素材说明
 ==================
 
-本目录（demo_media/）存放 DemoReel.html 的全部媒体文件，同名替换即可生效。
+本目录（demo_media/）存放 showreel.html 的全部媒体文件，同名替换即可生效。
 
 Showreel 视频：自动识别，不用改文件名
 ------------------------------------
 把视频（mp4 / mov / mkv / webm / avi 都行）丢进 showreel/ 目录，
-然后双击桌面「DemoReel作品集」快捷方式（它会先跑 tools\scan_showreel.ps1）：
+然后双击 showreel\打开作品集.cmd（它会先跑 tools\scan_showreel.ps1）：
 
   1. 自动挑出 showreel/ 里最新的那个视频
   2. 浏览器能直接放的（mp4/webm + H.264/VP8/VP9/AV1）→ 直接用
@@ -61,7 +61,7 @@ linglong2          灵笼 第二季
 说明
 ----
 - 海报来自豆瓣 / B站 / Steam / 方特官网，版权归原方，仅作个人作品集展示。
-- 顺序、增删、作品名在 DemoReel.html 顶部 DATA.heroWorks 里维护。
+- 顺序、增删、作品名在 showreel.html 顶部 DATA.heroWorks 里维护。
 - 视频若需转码/抽帧（本机 ffmpeg）：
   C:\Users\zhouhaibin\AppData\Local\ffmpeg\ffmpeg-9.0.2-full_build\bin\ffmpeg.exe
   例：ffmpeg -i "源.mov" -vf "scale=1280:-2" -c:v libx264 -crf 21 -preset veryfast -an "showreel_2025.mp4"
