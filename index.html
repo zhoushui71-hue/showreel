@@ -559,6 +559,8 @@
   .bm-hud, .bm-c, .yr, .barcode { display:none !important; }
   /* 去掉字标下方流动光条（保留静态分隔线，要一起去掉就把 ::before 也加进来） */
   .bm-sub::after { display:none !important; }
+  /* 播放器内的扫描线 */
+  .player::after { display:none !important; }
 </style>
 </head>
 <body data-dr-region-count="10" data-dr-key-count="14">
@@ -659,7 +661,7 @@
         <svg viewBox="0 0 14 16" fill="currentColor"><path d="M0 1.5v13l13-6.5z"></path></svg>PLAY SHOWREEL
       </button>
       <a class="btn gold" href="https://gitcode.com/Abin169/HouTools_zhb" target="_blank" rel="noopener">HOUTOOLS ↗</a>
-      <span class="btn ghost soon" title="待定">MIND MAP · 待定</span>
+      
     </div>
     <div class="contact" data-dr-keys="hero.contact_mail,hero.contact_tel" spellcheck="false">
       <!--T:hero.contact_mail--><a data-dr-href="mailto:1697619277@qq.com"><i>MAIL</i>1697619277@qq.com</a><!--/T:hero.contact_mail-->
@@ -1086,7 +1088,7 @@ function $$(s){ return [...document.querySelectorAll(s)]; }
       const vt = masterTime - INTRO;
       syncing = true;
       if (Math.abs(v.currentTime - vt) > 0.35) { try { v.currentTime = vt; } catch (_) {} }
-      if (playing && v.paused) v.play().catch(()=>{});
+      if (playing && v.paused) v.play().catch(() => { v.controls = true; v.setAttribute('data-need-gesture','1'); });
       if (!playing && !v.paused) v.pause();
       syncing = false;
     }
@@ -1109,6 +1111,13 @@ function $$(s){ return [...document.querySelectorAll(s)]; }
   };
   const pause = () => { playing = false; v.pause(); render(); };
   const toggle = () => { playing ? pause() : play(); };
+  // 浏览器自动播放策略：在用户手势里先 play 一次再暂停，给后续程序化播放“解锁”
+  const unlockMedia = () => {
+    try {
+      const pr = v.play();
+      if (pr && pr.then) pr.then(() => { try { v.pause(); } catch (_) {} }).catch(() => {});
+    } catch (_) {}
+  };
 
   // 拖动 / 点击进度条：按指针位置映射到统一时间轴
   const seekFromEvent = e => {
@@ -1137,9 +1146,9 @@ function $$(s){ return [...document.querySelectorAll(s)]; }
   });
 
   // 点击视频/片头/片尾画面 = 播放/暂停切换；左下角按钮同样切换
-  [playBtn, v, intro, outro].forEach(el => el.addEventListener('click', e => { e.stopPropagation(); toggle(); }));
-  $('#showreelPlay').addEventListener('click', play);
-  $('#heroPlay').addEventListener('click', () => {
+  [playBtn, v, intro, outro].forEach(el => el.addEventListener('click', e => { e.stopPropagation(); unlockMedia(); toggle(); }));
+  $('#showreelPlay').addEventListener('click', () => { unlockMedia(); play(); });
+  $('#heroPlay').addEventListener('click', () => { unlockMedia();
     document.getElementById('showreel').scrollIntoView({ behavior:'smooth' });
     setTimeout(play, 650);
   });
