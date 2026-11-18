@@ -41,7 +41,7 @@
   /* ---------- 首屏 ---------- */
   .hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:132px 24px 96px;overflow:hidden;text-align:center}
   .strips{position:absolute;inset:0;z-index:0;pointer-events:none}
-  .strip{position:absolute;left:0;right:0;height:clamp(96px,6.6vw,136px);overflow:hidden;pointer-events:auto;
+  .strip{position:absolute;left:0;right:0;height:clamp(106px,7.26vw,150px);overflow:hidden;pointer-events:auto;
     -webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);
     mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
   /* 上面这条整条镜像：内部同样是“向左流”，视觉上就变成向右流（卡片再单张翻回来，图不会反） */
@@ -115,20 +115,9 @@
     pointer-events:none;z-index:0;filter:blur(8px);animation:glowPulse 4.2s ease-in-out infinite}
   @keyframes glowPulse{0%,100%{opacity:.35}50%{opacity:1}}
 
-  /* 字标：笔刷 Z Hou Haibin（用用户给的字形做成霓虹 + 赛博动效） */
-  .wm{position:relative;z-index:1;display:block;width:clamp(560px,84vw,980px);height:auto;overflow:visible;
-    filter:drop-shadow(0 0 22px rgba(255,47,120,.55)) drop-shadow(0 0 62px rgba(255,47,120,.3));
-    animation:wmFlicker 9s steps(1,end) infinite}
-  .wm .ghost{opacity:0;mix-blend-mode:screen;animation:rgbSplit 6.4s steps(1,end) infinite}
-  .wm .sheen{animation:logoSheen 7s linear infinite}
-  .wm .scan{animation:logoScan 5.4s linear infinite}
-  @keyframes wmFlicker{0%,96%,100%{opacity:1}96.3%{opacity:.6}96.8%{opacity:1}97.5%{opacity:.35}98%{opacity:1}}
-  @keyframes rgbSplit{0%,84%,100%{opacity:0;transform:none}
-    84.3%{opacity:.85;transform:translate(-10px,2px)}
-    85.1%{opacity:.7;transform:translate(8px,-2px)}
-    86%{opacity:0;transform:none}}
-  @keyframes logoSheen{0%{transform:translateX(0)}100%{transform:translateX(3260px)}}
-  @keyframes logoScan{0%{transform:translateY(0)}100%{transform:translateY(880px)}}
+  /* 字标：像素级分色 PNG（Z/H 红、其余白），无 mask 首帧问题、边缘锐利 */
+  .wm{position:relative;z-index:1;display:block;width:clamp(600px,86vw,1000px);height:auto;
+    filter:drop-shadow(0 0 8px rgba(255,47,120,.5)) drop-shadow(0 0 24px rgba(255,47,120,.28))}
 
   .yr{position:absolute;right:1%;bottom:9%;z-index:2;font-family:var(--mono);font-weight:700;
     font-size:clamp(10px,1.1vw,15px);letter-spacing:.24em;color:#eaf7ff;transform:rotate(-7deg);
@@ -223,7 +212,13 @@
   .note{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--mute);max-width:340px;text-align:right;line-height:1.9}
   @media(max-width:760px){.note{text-align:left}}
 
-  /* ---------- Showreel ---------- */
+  /* ---------- Showreel（统一时间轴：片头→正片→片尾，共用一条进度条） ---------- */
+  /* 聚焦视频：本区块加宽、收紧留白，让播放器成为绝对视觉中心 */
+  .showreel-section{padding:52px 0 64px}
+  .showreel-section > .wrap{max-width:1680px}
+  .showreel-section .sec-head{margin-bottom:20px;padding-bottom:14px}
+  .showreel-section .player{border-color:rgba(255,61,107,.28);box-shadow:0 0 0 1px rgba(255,61,107,.06),0 30px 90px rgba(0,0,0,.6)}
+  .showreel-section .player-meta{margin-top:16px}
   .player{position:relative;aspect-ratio:16/9;background:#000;border:1px solid var(--line);overflow:hidden}
   .player .poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.9}
   .player .dim{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(5,6,10,.15),rgba(5,6,10,.68))}
@@ -235,17 +230,77 @@
   .play .ring svg{fill:#fff;width:22px;height:22px;margin-left:4px}
   .play .lbl{font-size:10px;letter-spacing:.42em;color:#fff;text-transform:uppercase}
   .player:hover .ring{border-color:var(--red);background:rgba(255,47,120,.12)}
-  .player video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;display:none;z-index:3}
-  .player.playing .poster,.player.playing .dim,.player.playing .lines,.player.playing .play{display:none}
-  .player.playing video{display:block}
+  .player video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;display:none;z-index:3;cursor:pointer}
+  /* 段状态由 JS 切换：bump-intro / vid / bump-outro */
+  .player.vid video{display:block}
+  .player.vid .poster,.player.vid .dim,.player.vid .lines,.player.vid .play{display:none}
   .player .pmsg{display:none;position:absolute;inset:0;z-index:4;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#cfd4de;font-family:var(--mono);font-size:13px;text-align:center;background:rgba(4,5,8,.45)}
   .player .pmsg small{font-size:11px;color:var(--sub);letter-spacing:.04em}
-  .player.missing .play{display:none}
+  .player.missing .play,.player.missing .pctrl{display:none}
   .player.missing .pmsg{display:flex}
-  .player-meta{display:flex;justify-content:space-between;align-items:baseline;gap:20px;margin-top:20px;flex-wrap:wrap;font-family:var(--mono)}
-  .player-meta h3{font-size:17px;font-weight:700;letter-spacing:.02em}
-  .player-meta .m{font-size:11px;letter-spacing:.1em;color:var(--mute)}
-  .player-meta .m b{color:var(--gold);font-weight:600}
+
+  /* 片头/片尾 bumper：字标复用首页 logo.png（同一 SVG mask + 渐变），改首页风格即同步
+     两段动画一律挂载但 play-state:paused，由 JS 用负 animation-delay 精确定格 → 可拖动跳转 */
+  .reel-bumper{position:absolute;inset:0;z-index:6;display:none;flex-direction:column;align-items:center;justify-content:center;
+    background:#05060a;overflow:hidden;font-family:var(--mono);color:var(--ink);cursor:pointer}
+  .player.bump-intro .reel-intro,.player.bump-outro .reel-outro{display:flex}
+  .reel-bumper .ri-grid{position:absolute;inset:0;opacity:0;pointer-events:none;
+    background:linear-gradient(rgba(125,211,252,.05) 1px,transparent 1px) 0 0/100% 34px,
+               linear-gradient(90deg,rgba(125,211,252,.05) 1px,transparent 1px) 0 0/34px 100%;
+    animation:riGrid 3.05s ease both;animation-play-state:paused}
+  .reel-bumper .ri-scan{position:absolute;inset:0;pointer-events:none;
+    background:repeating-linear-gradient(0deg,rgba(255,255,255,.045) 0 1px,transparent 1px 3px);
+    animation:riScan 3.05s steps(1) both;animation-play-state:paused}
+  .reel-bumper .ri-sweep{position:absolute;top:-10%;bottom:-10%;width:22%;left:-30%;pointer-events:none;
+    background:linear-gradient(90deg,transparent,rgba(255,47,120,.18),rgba(125,211,252,.22),transparent);
+    filter:blur(12px);transform:skewX(-14deg);animation:riSweep 1.5s cubic-bezier(.35,.1,.2,1) .12s both;animation-play-state:paused}
+  .reel-bumper .ri-ring{position:absolute;width:min(52%,420px);aspect-ratio:1;border:1px solid rgba(255,61,107,.22);border-radius:50%;pointer-events:none;
+    animation:riRing 3.05s cubic-bezier(.2,.7,.2,1) both;animation-play-state:paused}
+  .reel-bumper .ri-ring::before,.reel-bumper .ri-ring::after{content:"";position:absolute;inset:14%;border:1px dashed rgba(125,211,252,.18);border-radius:50%}
+  .reel-bumper .ri-ring::after{inset:32%;border-style:solid;border-color:rgba(255,176,77,.18)}
+  .reel-bumper .ri-core{position:relative;z-index:2;text-align:center;padding:0 20px;width:100%}
+  .reel-bumper .ri-kicker{font-size:clamp(8px,1vw,11px);letter-spacing:.5em;color:var(--cyan);margin-bottom:clamp(6px,1vw,14px);
+    animation:riKicker 3.05s ease both;animation-play-state:paused}
+  .reel-bumper .ri-mark{position:relative;display:block;margin:0 auto;width:min(74%,720px);line-height:0;
+    filter:drop-shadow(0 0 26px rgba(255,47,120,.35));animation:riMark 3.05s cubic-bezier(.16,.9,.25,1) both;animation-play-state:paused}
+  .reel-bumper .ri-mark img{display:block;width:100%;height:auto}
+  .reel-bumper .ro-thanks{font-size:clamp(22px,4.6vw,56px);font-weight:800;letter-spacing:.14em;line-height:1.32;color:#fff;
+    text-shadow:0 0 26px rgba(255,47,120,.55),0 0 64px rgba(255,47,120,.28);
+    animation:riMark 3.05s cubic-bezier(.16,.9,.25,1) both;animation-play-state:paused}
+  .reel-bumper .ro-thanks em{font-style:normal;color:var(--pink)}
+  .reel-bumper .ri-rule{height:1px;width:min(560px,74%);margin:clamp(14px,2.2vw,26px) auto 0;
+    background:linear-gradient(90deg,transparent,var(--pink),transparent);transform:scaleX(0);
+    animation:riRule 3.05s ease both;animation-play-state:paused}
+  .reel-bumper .ri-sub{font-size:clamp(8px,1vw,11px);letter-spacing:.42em;color:var(--sub);margin-top:clamp(10px,1.6vw,18px);
+    animation:riSub 3.05s ease both;animation-play-state:paused}
+  .reel-bumper .ri-hud{position:absolute;font-size:clamp(7px,.85vw,10px);letter-spacing:.28em;color:var(--mute);z-index:2;
+    animation:riHud 3.05s ease both;animation-play-state:paused}
+  .reel-bumper .ri-hud.tl{top:7%;left:6%}.reel-bumper .ri-hud.br{bottom:7%;right:6%;text-align:right}
+  .reel-bumper .ri-hud b{color:var(--pink);font-weight:400}
+  /* 片头/片尾共用时间轴：0-.4 入场 · .4-2.0 停留 · 2.0-3.0 消散 */
+  @keyframes riGrid{0%{opacity:0}12%{opacity:.85}72%{opacity:.6}100%{opacity:0}}
+  @keyframes riScan{0%,100%{opacity:.7}}
+  @keyframes riRing{0%{transform:scale(.6) rotate(-25deg);opacity:0}16%{transform:scale(1) rotate(0);opacity:1}72%{opacity:.8}100%{transform:scale(1.35);opacity:0}}
+  @keyframes riSweep{0%{left:-30%;opacity:0}15%{opacity:1}100%{left:115%;opacity:0}}
+  @keyframes riKicker{0%{opacity:0;letter-spacing:.9em}12%{opacity:1;letter-spacing:.5em}70%{opacity:1}86%,100%{opacity:0;letter-spacing:.7em}}
+  @keyframes riMark{0%{opacity:0;transform:scale(1.12);filter:blur(14px)}12%{opacity:1;transform:scale(1);filter:blur(0)}70%{opacity:1;transform:scale(1);filter:blur(0)}86%,100%{opacity:0;transform:scale(1.05);filter:blur(10px)}}
+  @keyframes riRule{0%,16%{transform:scaleX(0);opacity:0}34%{transform:scaleX(1);opacity:1}72%{opacity:1}88%,100%{transform:scaleX(0);opacity:0}}
+  @keyframes riSub{0%,24%{opacity:0}38%{opacity:1}70%{opacity:1}84%,100%{opacity:0}}
+  @keyframes riHud{0%{opacity:0}14%{opacity:1}72%{opacity:1}86%,100%{opacity:0}}
+
+  /* ---------- 统一控件条（片头 / 正片 / 片尾 共用一条进度） ---------- */
+  .pctrl{position:absolute;left:0;right:0;bottom:0;z-index:8;display:flex;align-items:center;gap:12px;
+    padding:14px 16px 12px;background:linear-gradient(0deg,rgba(3,4,8,.92),rgba(3,4,8,0));font-family:var(--mono)}
+  .pc-play{flex:0 0 auto;width:30px;height:30px;border:1px solid rgba(255,255,255,.4);background:rgba(0,0,0,.4);
+    color:#fff;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
+  .pc-play:hover{border-color:var(--pink);color:var(--pink)}
+  .pc-play svg{width:12px;height:12px;fill:currentColor}
+  .pc-track{position:relative;flex:1;height:18px;display:flex;align-items:center;cursor:pointer;touch-action:none}
+  .pc-track::before{content:"";position:absolute;left:0;right:0;height:3px;background:rgba(255,255,255,.24)}
+  .pc-fill{position:absolute;left:0;height:3px;width:0;background:var(--pink);box-shadow:0 0 9px rgba(255,47,120,.7);pointer-events:none}
+  .pc-head{position:absolute;left:0;width:11px;height:11px;border-radius:50%;background:#fff;box-shadow:0 0 9px var(--pink);
+    transform:translateX(-50%);pointer-events:none}
+  .pc-time{flex:0 0 auto;font-size:10px;letter-spacing:.1em;color:#cfd4de;min-width:94px;text-align:right}
 
   /* ---------- 自研资产 ---------- */
   .tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
@@ -420,7 +475,6 @@
   .reveal.in{opacity:1;transform:none}
   .no-anim .reveal{opacity:1;transform:none;transition:none}
   .no-anim .dot,.no-anim .deco i{animation:none}
-  .no-anim .wm .ghost,.no-anim .wm .sheen,.no-anim .wm .scan{animation:none}
   .no-anim .crt,.no-anim .wm,.no-anim .bm-c,.no-anim .yr,.no-anim .bm-stage::after,.no-anim .bm-sub::after,
   .no-anim body::after,.no-anim .beam,.no-anim .idx::before{animation:none}
   .no-anim .crt{opacity:0}
@@ -429,7 +483,7 @@
      如需静止版本，用 ?noanim 参数（或在网址后加 ?noanim）。 */
   @media(max-height:1000px){
     .hero{padding:138px 24px 90px}
-    .wm{width:clamp(650px,80vw,960px)}
+    .wm{width:clamp(640px,78vw,920px)}
     .bm-sub{margin-top:6px;padding-top:9px}
     .role{margin-top:14px}
     .stats{margin-top:20px}
@@ -440,7 +494,7 @@
     .hero{padding:145px 24px 86px}
     .strip{height:clamp(84px,6.4vw,124px)}
     .strip.top{top:52px}
-    .wm{width:clamp(620px,76vw,900px)}
+    .wm{width:clamp(620px,76vw,860px)}
     .bm-sub{margin-top:4px;padding-top:8px}
     .role{margin-top:8px}
     .stats{margin-top:6px}
@@ -450,7 +504,7 @@
   }
   @media(max-height:800px){
     .hero{padding:130px 24px 84px}
-    .wm{width:clamp(560px,68vw,860px)}
+    .wm{width:clamp(560px,70vw,780px)}
     .contact a{padding:4px 9px;font-size:8.5px}
     .stats{margin-top:4px}
     .cta{margin-top:10px}
@@ -468,9 +522,46 @@
     .bm-sub .zh{letter-spacing:.22em;text-indent:.22em}
     .barcode{display:none}
   }
+  /* ===== 字标出场：霓虹描边逐笔绘制 + 色差（参考界外狂潮） ===== */
+  .bm-stage .wm{transition:opacity .22s ease}
+  .bm-stage.wm-animating .wm{opacity:0}
+  .wm-fx{position:absolute;z-index:3;pointer-events:none;opacity:0;transition:opacity .2s ease}
+  .wm-fx.play{opacity:1}
+  .wm-fx svg{display:block;width:100%;height:100%;overflow:visible;
+    filter:drop-shadow(0 0 5px rgba(201,255,59,.9)) drop-shadow(0 0 16px rgba(201,255,59,.45))}
+  .wm-fx path{fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .wm-fx .main{stroke:#c9ff3b;stroke-width:5}
+  .wm-fx .cy{stroke:#00e5ff;stroke-width:4;opacity:.8;mix-blend-mode:screen}
+  .wm-fx .mg{stroke:#ff2ea6;stroke-width:4;opacity:.8;mix-blend-mode:screen}
+  .wm-fx .cg path{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);
+    animation:wmDraw var(--dur) cubic-bezier(.45,.05,.25,1) var(--delay) forwards}
+  @keyframes wmDraw{to{stroke-dashoffset:0}}
+  .wm-fx .flash{position:absolute;inset:-12%;opacity:0;pointer-events:none;mix-blend-mode:screen;
+    background:radial-gradient(closest-side,rgba(244,255,206,.95),rgba(201,255,59,.38) 45%,transparent 72%)}
+  .wm-fx.play .flash{animation:wmFlash .34s ease-out var(--fd,.95s) forwards}
+  @keyframes wmFlash{0%{opacity:0}18%{opacity:.9}100%{opacity:0}}
+  .bm-stage.wm-done .wm{animation:wmPop .5s cubic-bezier(.2,1.4,.35,1)}
+  @keyframes wmPop{
+    0%{opacity:0;transform:scale(.97)}
+    55%{opacity:1;transform:scale(1.02)}
+    100%{opacity:1;transform:none}
+  }
+  .bm-stage.wm-glitch .wm{animation:wmGlitch .16s steps(2,end) 2}
+  @keyframes wmGlitch{
+    0%{transform:translate(-3px,0)}
+    50%{transform:translate(3px,-1px)}
+    100%{transform:none}
+  }
+  @media (prefers-reduced-motion: reduce){.wm-fx{display:none}.bm-stage .wm{opacity:1 !important}}
+  /* ===== 2026-11-19 去背景：隐藏所有装饰层（保留内容：导航/文案/字标/统计/按钮/联系方式） ===== */
+  .deco, .hero-grid, .crt, .hud-vert, .frame, .torch, .beam,
+  body::before, body::after,
+  .bm-hud, .bm-c, .yr, .barcode { display:none !important; }
+  /* 去掉字标下方流动光条（保留静态分隔线，要一起去掉就把 ::before 也加进来） */
+  .bm-sub::after { display:none !important; }
 </style>
 </head>
-<body data-dr-region-count="25" data-dr-key-count="49">
+<body data-dr-region-count="10" data-dr-key-count="14">
 
 <div class="beam" aria-hidden="true"></div>
 <div class="deco" id="deco" aria-hidden="true"><i class="dot" style="left: 98.93%; top: 76.58%; width: 2.7px; height: 2.7px; --t: 15.0s; --dl: -4.8s;"></i><i class="dot" style="left: 28.52%; top: 70.18%; width: 3.2px; height: 3.2px; --t: 16.1s; --dl: -9.2s;"></i><i class="dot" style="left: 80.85%; top: 73.24%; width: 3.4px; height: 3.4px; --t: 18.7s; --dl: -5.5s;"></i><i class="dot" style="left: 51.07%; top: 76.94%; width: 2.4px; height: 2.4px; --t: 23.7s; --dl: -3.1s;"></i><i class="dot" style="left: 53.05%; top: 34.48%; width: 2.5px; height: 2.5px; --t: 25.5s; --dl: -23.7s;"></i><i class="dot" style="left: 4.37%; top: 90.99%; width: 2.5px; height: 2.5px; --t: 25.7s; --dl: -20.8s;"></i><i class="dot" style="left: 61.04%; top: 71.99%; width: 1.9px; height: 1.9px; --t: 24.4s; --dl: -5.8s;"></i><i class="dot" style="left: 51.21%; top: 35.74%; width: 3px; height: 3px; --t: 18.9s; --dl: -2.2s;"></i><i class="dot" style="left: 37.72%; top: 11.42%; width: 3.1px; height: 3.1px; --t: 22.1s; --dl: -11.2s;"></i><i class="dot" style="left: 39.82%; top: 16.73%; width: 3.4px; height: 3.4px; --t: 18.9s; --dl: -19.3s;"></i><i class="dot" style="left: 27.44%; top: 64.22%; width: 2.1px; height: 2.1px; --t: 20.2s; --dl: -8.2s;"></i><i class="dot" style="left: 67.37%; top: 46.39%; width: 1.8px; height: 1.8px; --t: 14.1s; --dl: -16.4s;"></i><i class="dot" style="left: 38.15%; top: 76.57%; width: 2.6px; height: 2.6px; --t: 19.1s; --dl: -7.7s;"></i><i class="dot" style="left: 93.52%; top: 44.62%; width: 2.4px; height: 2.4px; --t: 20.4s; --dl: -8.3s;"></i><i class="dot" style="left: 46.91%; top: 63.93%; width: 1.5px; height: 1.5px; --t: 18.9s; --dl: -19.3s;"></i><i class="dot" style="left: 17.52%; top: 29.29%; width: 2.2px; height: 2.2px; --t: 19.7s; --dl: -8.5s;"></i><i class="dot" style="left: 4.13%; top: 32.24%; width: 3.3px; height: 3.3px; --t: 21.5s; --dl: -6.0s;"></i><i class="dot" style="left: 7.78%; top: 47.65%; width: 2.1px; height: 2.1px; --t: 13.3s; --dl: -0.7s;"></i><i class="dot" style="left: 23.42%; top: 58.83%; width: 3.1px; height: 3.1px; --t: 19.3s; --dl: -2.2s;"></i><i class="dot" style="left: 5.72%; top: 21.16%; width: 3.6px; height: 3.6px; --t: 21.9s; --dl: -5.9s;"></i><i class="dot" style="left: 67.78%; top: 34.36%; width: 2.6px; height: 2.6px; --t: 22.9s; --dl: -19.8s;"></i><i class="dot" style="left: 10.67%; top: 79.61%; width: 3px; height: 3px; --t: 21.1s; --dl: -0.5s;"></i><i class="dot" style="left: 95.72%; top: 9.45%; width: 2.1px; height: 2.1px; --t: 22.9s; --dl: -2.4s;"></i><i class="dot" style="left: 82.81%; top: 48.59%; width: 3px; height: 3px; --t: 18.4s; --dl: -11.8s;"></i><i class="dot" style="left: 49.05%; top: 29.33%; width: 2.5px; height: 2.5px; --t: 21.1s; --dl: -13.6s;"></i><i class="dot" style="left: 16.53%; top: 85.74%; width: 3.6px; height: 3.6px; --t: 18.8s; --dl: -10.4s;"></i><i class="cross" style="left: 70.59%; top: 57.87%; width: 5px; height: 5px; --t: 5.5s; animation-delay: -1.2s;"></i><i class="cross" style="left: 52.82%; top: 74.7%; width: 11px; height: 11px; --t: 5.1s; animation-delay: -3.9s;"></i><i class="cross" style="left: 21.23%; top: 67.67%; width: 7px; height: 7px; --t: 5.2s; animation-delay: -2.7s;"></i><i class="cross" style="left: 42%; top: 10.23%; width: 6px; height: 6px; --t: 5.5s; animation-delay: -1.9s;"></i><i class="cross" style="left: 26.57%; top: 40.61%; width: 12px; height: 12px; --t: 3.8s; animation-delay: -2.9s;"></i><i class="cross" style="left: 37.67%; top: 59.32%; width: 8px; height: 8px; --t: 4.0s; animation-delay: -2.9s;"></i><i class="cross" style="left: 59.28%; top: 39.26%; width: 11px; height: 11px; --t: 7.0s; animation-delay: -3s;"></i><i class="cross" style="left: 29.31%; top: 23.69%; width: 10px; height: 10px; --t: 5.9s; animation-delay: -3.1s;"></i><i class="cross" style="left: 71.22%; top: 35.23%; width: 10px; height: 10px; --t: 3.8s; animation-delay: -3.7s;"></i><i class="dia" style="left: 78.12%; top: 27.08%; width: 15px; height: 15px; --t: 35.6s;"></i><i class="dia" style="left: 22.53%; top: 68.02%; width: 15px; height: 15px; --t: 33.0s;"></i><i class="dia" style="left: 36.85%; top: 67.73%; width: 15px; height: 15px; --t: 34.1s;"></i></div>
@@ -483,51 +574,50 @@
     <div class="nav-links">
       <a href="#top" data-sec="top" class=""><i>01</i>HOME</a>
       <a href="#showreel" data-sec="showreel" class=""><i>02</i>SHOWREEL</a>
-      <a href="#resume" data-sec="resume" class="active"><i>03</i>RESUME</a>
     </div>
   </div>
 </nav>
 
 <header class="hero" id="top">
-  <div class="strips" id="strips"><div class="strip top"><div class="track" style="transform: translate3d(-39.34px, 0px, 0px); column-gap: 28.04px;"><a class="poster" href="demo_media/hero/sanguo.jpg" target="_blank" rel="noopener" data-k="sanguo" data-name="三国的星空" aria-label="三国的星空" style="width: 51.63px;"><img src="demo_media/hero/sanguo.jpg" alt="三国的星空" loading="eager" decoding="async">
-      <span class="pcap"><b>三国的星空</b><i>电影 · 2025</i></span></a><a class="poster" href="demo_media/hero/baoshuiguan.jpg" target="_blank" rel="noopener" data-k="baoshuiguan" data-name="爆水管" aria-label="爆水管" style="width: 58.57px;"><img src="demo_media/hero/baoshuiguan.jpg" alt="爆水管" loading="eager" decoding="async">
-      <span class="pcap"><b>爆水管</b><i>电影 · 2026</i></span></a><a class="poster" href="demo_media/hero/mingrileyuan.jpg" target="_blank" rel="noopener" data-k="mingrileyuan" data-name="明日乐园" aria-label="明日乐园" style="width: 46.17px;"><img src="demo_media/hero/mingrileyuan.jpg" alt="明日乐园" loading="eager" decoding="async">
-      <span class="pcap"><b>明日乐园</b><i>剧集</i></span></a><a class="poster" href="demo_media/hero/marvelrivals.jpg" target="_blank" rel="noopener" data-k="marvelrivals" data-name="漫威争锋 · 永夜降临" aria-label="漫威争锋 · 永夜降临" style="width: 54.67px;"><img src="demo_media/hero/marvelrivals.jpg" alt="漫威争锋 · 永夜降临" loading="eager" decoding="async">
-      <span class="pcap"><b>漫威争锋 · 永夜降临</b><i>CG</i></span></a><a class="poster" href="demo_media/hero/beihuigui.jpg" target="_blank" rel="noopener" data-k="beihuigui" data-name="北回归线以北" aria-label="北回归线以北" style="width: 58.57px;"><img src="demo_media/hero/beihuigui.jpg" alt="北回归线以北" loading="eager" decoding="async">
-      <span class="pcap"><b>北回归线以北</b><i>电影 · 2026</i></span></a><a class="poster" href="demo_media/hero/huangyanzhiqu.jpg" target="_blank" rel="noopener" data-k="huangyanzhiqu" data-name="谎言之躯" aria-label="谎言之躯" style="width: 54.67px;"><img src="demo_media/hero/huangyanzhiqu.jpg" alt="谎言之躯" loading="eager" decoding="async">
-      <span class="pcap"><b>谎言之躯</b><i>电影 · 2026</i></span></a><a class="poster" href="demo_media/hero/teliduxing.jpg" target="_blank" rel="noopener" data-k="teliduxing" data-name="特立独行" aria-label="特立独行" style="width: 51.4px;"><img src="demo_media/hero/teliduxing.jpg" alt="特立独行" loading="eager" decoding="async">
-      <span class="pcap"><b>特立独行</b><i>电影 · 2026</i></span></a><a class="poster" href="demo_media/hero/endfield.jpg" target="_blank" rel="noopener" data-k="endfield" data-name="明日方舟：终末地 · 莱万汀" aria-label="明日方舟：终末地 · 莱万汀" style="width: 145.93px;"><img src="demo_media/hero/endfield.jpg" alt="明日方舟：终末地 · 莱万汀" loading="eager" decoding="async">
-      <span class="pcap"><b>明日方舟：终末地 · 莱万汀</b><i>CG</i></span></a><a class="poster" href="demo_media/hero/shenghuan.jpg" target="_blank" rel="noopener" data-k="shenghuan" data-name="生还" aria-label="生还" style="width: 58.57px;"><img src="demo_media/hero/shenghuan.jpg" alt="生还" loading="eager" decoding="async">
-      <span class="pcap"><b>生还</b><i>电影 · 2025</i></span></a><a class="poster" href="demo_media/hero/ziyegui.jpg" target="_blank" rel="noopener" data-k="ziyegui" data-name="子夜归" aria-label="子夜归" style="width: 46.1px;"><img src="demo_media/hero/ziyegui.jpg" alt="子夜归" loading="eager" decoding="async">
-      <span class="pcap"><b>子夜归</b><i>剧集</i></span></a><a class="poster" href="demo_media/hero/shaoxiajixi.jpg" target="_blank" rel="noopener" data-k="shaoxiajixi" data-name="少侠逆袭攻略" aria-label="少侠逆袭攻略" style="width: 58.37px;"><img src="demo_media/hero/shaoxiajixi.jpg" alt="少侠逆袭攻略" loading="eager" decoding="async">
-      <span class="pcap"><b>少侠逆袭攻略</b><i>剧集 · 2026</i></span></a><a class="poster" href="demo_media/hero/mingyue.jpg" target="_blank" rel="noopener" data-k="mingyue" data-name="明月苍茫" aria-label="明月苍茫" style="width: 46.1px;"><img src="demo_media/hero/mingyue.jpg" alt="明月苍茫" loading="eager" decoding="async">
-      <span class="pcap"><b>明月苍茫</b><i>剧集</i></span></a><a class="poster" href="demo_media/hero/qunxing.jpg" target="_blank" rel="noopener" data-k="qunxing" data-name="群星闪耀时" aria-label="群星闪耀时" style="width: 58.57px;"><img src="demo_media/hero/qunxing.jpg" alt="群星闪耀时" loading="eager" decoding="async">
-      <span class="pcap"><b>群星闪耀时</b><i>电影 · 2026</i></span></a><a class="poster" href="demo_media/hero/xingyuezhengtu.jpg" target="_blank" rel="noopener" data-k="xingyuezhengtu" data-name="星月征途" aria-label="星月征途" style="width: 54.67px;"><img src="demo_media/hero/xingyuezhengtu.jpg" alt="星月征途" loading="eager" decoding="async">
-      <span class="pcap"><b>星月征途</b><i>剧集 · 2026</i></span></a><a class="poster" href="demo_media/hero/nezha2.jpg" target="_blank" rel="noopener" data-k="nezha2" data-name="哪吒之魔童闹海" aria-label="哪吒之魔童闹海" style="width: 58.57px;"><img src="demo_media/hero/nezha2.jpg" alt="哪吒之魔童闹海" loading="eager" decoding="async">
-      <span class="pcap"><b>哪吒之魔童闹海</b><i>电影 · 2025</i></span></a><a class="poster" href="demo_media/hero/hotpot.jpg" target="_blank" rel="noopener" data-k="hotpot" data-name="火锅艺术家" aria-label="火锅艺术家" style="width: 58.27px;"><img src="demo_media/hero/hotpot.jpg" alt="火锅艺术家" loading="eager" decoding="async">
-      <span class="pcap"><b>火锅艺术家</b><i>电影 · 2025</i></span></a><a class="poster" href="demo_media/hero/wuzhen.jpg" target="_blank" rel="noopener" data-k="wuzhen" data-name="永劫无间 · 巫真" aria-label="永劫无间 · 巫真" style="width: 145.93px;"><img src="demo_media/hero/wuzhen.jpg" alt="永劫无间 · 巫真" loading="eager" decoding="async">
-      <span class="pcap"><b>永劫无间 · 巫真</b><i>CG</i></span></a><a class="poster" href="demo_media/hero/earth3.jpg" target="_blank" rel="noopener" data-k="earth3" data-name="流浪地球3" aria-label="流浪地球3" style="width: 58.57px;"><img src="demo_media/hero/earth3.jpg" alt="流浪地球3" loading="eager" decoding="async">
-      <span class="pcap"><b>流浪地球3</b><i>电影 · 2027</i></span></a><a class="poster" href="demo_media/hero/shoulongzhe.jpg" target="_blank" rel="noopener" data-k="shoulongzhe" data-name="守龙者" aria-label="守龙者" style="width: 57.79px;"><img src="demo_media/hero/shoulongzhe.jpg" alt="守龙者" loading="eager" decoding="async">
-      <span class="pcap"><b>守龙者</b><i>电影 · 2024</i></span></a><a class="poster" href="demo_media/hero/yuelin.jpg" target="_blank" rel="noopener" data-k="yuelin" data-name="月鳞绮纪" aria-label="月鳞绮纪" style="width: 54.67px;"><img src="demo_media/hero/yuelin.jpg" alt="月鳞绮纪" loading="eager" decoding="async">
-      <span class="pcap"><b>月鳞绮纪</b><i>剧集</i></span></a></div></div><div class="strip bottom"><div class="track" style="transform: translate3d(-49.11px, 0px, 0px); column-gap: 28.04px;"><a class="poster" href="demo_media/hero/wangu.jpg" target="_blank" rel="noopener" data-k="wangu" data-name="万古最强宗" aria-label="万古最强宗" style="width: 46.1px;"><img src="demo_media/hero/wangu.jpg" alt="万古最强宗" loading="eager" decoding="async">
-      <span class="pcap"><b>万古最强宗</b><i>剧集</i></span></a><a class="poster" href="demo_media/hero/jiubu.jpg" target="_blank" rel="noopener" data-k="jiubu" data-name="九部的检察官" aria-label="九部的检察官" style="width: 46.1px;"><img src="demo_media/hero/jiubu.jpg" alt="九部的检察官" loading="eager" decoding="async">
-      <span class="pcap"><b>九部的检察官</b><i>剧集 · 2024</i></span></a><a class="poster" href="demo_media/hero/tianyuan.jpg" target="_blank" rel="noopener" data-k="tianyuan" data-name="王者荣耀 · 敬我三分 / 天元" aria-label="王者荣耀 · 敬我三分 / 天元" style="width: 145.93px;"><img src="demo_media/hero/tianyuan.jpg" alt="王者荣耀 · 敬我三分 / 天元" loading="eager" decoding="async">
-      <span class="pcap"><b>王者荣耀 · 敬我三分 / 天元</b><i>CG</i></span></a><a class="poster" href="demo_media/hero/xiaoyao.jpg" target="_blank" rel="noopener" data-k="xiaoyao" data-name="逍遥" aria-label="逍遥" style="width: 46.1px;"><img src="demo_media/hero/xiaoyao.jpg" alt="逍遥" loading="eager" decoding="async">
-      <span class="pcap"><b>逍遥</b><i>剧集</i></span></a><a class="poster" href="demo_media/hero/hearthstone.jpg" target="_blank" rel="noopener" data-k="hearthstone" data-name="炉石传说 · 大地的裂变" aria-label="炉石传说 · 大地的裂变" style="width: 145.93px;"><img src="demo_media/hero/hearthstone.jpg" alt="炉石传说 · 大地的裂变" loading="eager" decoding="async">
-      <span class="pcap"><b>炉石传说 · 大地的裂变</b><i>CG</i></span></a><a class="poster" href="demo_media/hero/endfield.jpg" target="_blank" rel="noopener" data-k="endfield" data-name="明日方舟：终末地 · 莱万汀" aria-label="明日方舟：终末地 · 莱万汀" style="width: 145.93px;"><img src="demo_media/hero/endfield.jpg" alt="明日方舟：终末地 · 莱万汀" loading="eager" decoding="async">
-      <span class="pcap"><b>明日方舟：终末地 · 莱万汀</b><i>CG</i></span></a><a class="poster" href="demo_media/hero/shenghuan.jpg" target="_blank" rel="noopener" data-k="shenghuan" data-name="生还" aria-label="生还" style="width: 58.57px;"><img src="demo_media/hero/shenghuan.jpg" alt="生还" loading="eager" decoding="async">
-      <span class="pcap"><b>生还</b><i>电影 · 2025</i></span></a><a class="poster" href="demo_media/hero/ziyegui.jpg" target="_blank" rel="noopener" data-k="ziyegui" data-name="子夜归" aria-label="子夜归" style="width: 46.1px;"><img src="demo_media/hero/ziyegui.jpg" alt="子夜归" loading="eager" decoding="async">
-      <span class="pcap"><b>子夜归</b><i>剧集</i></span></a><a class="poster" href="demo_media/hero/linglong2.jpg" target="_blank" rel="noopener" data-k="linglong2" data-name="灵笼 第二季" aria-label="灵笼 第二季" style="width: 46.86px;"><img src="demo_media/hero/linglong2.jpg" alt="灵笼 第二季" loading="eager" decoding="async">
-      <span class="pcap"><b>灵笼 第二季</b><i>番剧 · 2025</i></span></a><a class="poster" href="demo_media/hero/xiaochengliangfang.jpg" target="_blank" rel="noopener" data-k="xiaochengliangfang" data-name="小城良方" aria-label="小城良方" style="width: 54.67px;"><img src="demo_media/hero/xiaochengliangfang.jpg" alt="小城良方" loading="eager" decoding="async">
-      <span class="pcap"><b>小城良方</b><i>剧集 · 2026</i></span></a><a class="poster" href="demo_media/hero/mingyue.jpg" target="_blank" rel="noopener" data-k="mingyue" data-name="明月苍茫" aria-label="明月苍茫" style="width: 46.1px;"><img src="demo_media/hero/mingyue.jpg" alt="明月苍茫" loading="eager" decoding="async">
-      <span class="pcap"><b>明月苍茫</b><i>剧集</i></span></a><a class="poster" href="demo_media/hero/qunxing.jpg" target="_blank" rel="noopener" data-k="qunxing" data-name="群星闪耀时" aria-label="群星闪耀时" style="width: 58.57px;"><img src="demo_media/hero/qunxing.jpg" alt="群星闪耀时" loading="eager" decoding="async">
-      <span class="pcap"><b>群星闪耀时</b><i>电影 · 2026</i></span></a><a class="poster" href="demo_media/hero/xingyuezhengtu.jpg" target="_blank" rel="noopener" data-k="xingyuezhengtu" data-name="星月征途" aria-label="星月征途" style="width: 54.67px;"><img src="demo_media/hero/xingyuezhengtu.jpg" alt="星月征途" loading="eager" decoding="async">
-      <span class="pcap"><b>星月征途</b><i>剧集 · 2026</i></span></a><a class="poster" href="demo_media/hero/shaoxiajixi.jpg" target="_blank" rel="noopener" data-k="shaoxiajixi" data-name="少侠逆袭攻略" aria-label="少侠逆袭攻略" style="width: 58.37px;"><img src="demo_media/hero/shaoxiajixi.jpg" alt="少侠逆袭攻略" loading="eager" decoding="async">
-      <span class="pcap"><b>少侠逆袭攻略</b><i>剧集 · 2026</i></span></a><a class="poster" href="demo_media/hero/mofangxiaojie.jpg" target="_blank" rel="noopener" data-k="mofangxiaojie" data-name="魔方小姐" aria-label="魔方小姐" style="width: 58.57px;"><img src="demo_media/hero/mofangxiaojie.jpg" alt="魔方小姐" loading="eager" decoding="async">
-      <span class="pcap"><b>魔方小姐</b><i>电影 · 2026</i></span></a><a class="poster" href="demo_media/hero/fanying.jpg" target="_blank" rel="noopener" data-k="fanying" data-name="凡应" aria-label="凡应" style="width: 145.93px;"><img src="demo_media/hero/fanying.jpg" alt="凡应" loading="eager" decoding="async">
-      <span class="pcap"><b>凡应</b><i>CG</i></span></a><a class="poster" href="demo_media/hero/earth3.jpg" target="_blank" rel="noopener" data-k="earth3" data-name="流浪地球3" aria-label="流浪地球3" style="width: 58.57px;"><img src="demo_media/hero/earth3.jpg" alt="流浪地球3" loading="eager" decoding="async">
-      <span class="pcap"><b>流浪地球3</b><i>电影 · 2027</i></span></a><a class="poster" href="demo_media/hero/oncehuman.jpg" target="_blank" rel="noopener" data-k="oncehuman" data-name="七日世界 · 雪国人生" aria-label="七日世界 · 雪国人生" style="width: 54.67px;"><img src="demo_media/hero/oncehuman.jpg" alt="七日世界 · 雪国人生" loading="eager" decoding="async">
-      <span class="pcap"><b>七日世界 · 雪国人生</b><i>CG</i></span></a><a class="poster" href="demo_media/hero/chunhuayan.jpg" target="_blank" rel="noopener" data-k="chunhuayan" data-name="春花焰" aria-label="春花焰" style="width: 61.5px;"><img src="demo_media/hero/chunhuayan.jpg" alt="春花焰" loading="eager" decoding="async">
+  <div class="strips" id="strips"><div class="strip top"><div class="track" style="transform: translate3d(-39.34px, 0px, 0px); column-gap: 28.04px;"><a class="poster" href="demo_media/hero/sanguo.jpg" target="_blank" rel="noopener" data-k="sanguo" data-name="三国的星空" aria-label="三国的星空" style="width: 56.79px;"><img src="demo_media/hero/sanguo.jpg" alt="三国的星空" loading="eager" decoding="async">
+      <span class="pcap"><b>三国的星空</b><i>电影 · 2025</i></span></a><a class="poster" href="demo_media/hero/baoshuiguan.jpg" target="_blank" rel="noopener" data-k="baoshuiguan" data-name="爆水管" aria-label="爆水管" style="width: 64.43px;"><img src="demo_media/hero/baoshuiguan.jpg" alt="爆水管" loading="eager" decoding="async">
+      <span class="pcap"><b>爆水管</b><i>电影 · 2026</i></span></a><a class="poster" href="demo_media/hero/mingrileyuan.jpg" target="_blank" rel="noopener" data-k="mingrileyuan" data-name="明日乐园" aria-label="明日乐园" style="width: 50.79px;"><img src="demo_media/hero/mingrileyuan.jpg" alt="明日乐园" loading="eager" decoding="async">
+      <span class="pcap"><b>明日乐园</b><i>剧集</i></span></a><a class="poster" href="demo_media/hero/marvelrivals.jpg" target="_blank" rel="noopener" data-k="marvelrivals" data-name="漫威争锋 · 永夜降临" aria-label="漫威争锋 · 永夜降临" style="width: 60.14px;"><img src="demo_media/hero/marvelrivals.jpg" alt="漫威争锋 · 永夜降临" loading="eager" decoding="async">
+      <span class="pcap"><b>漫威争锋 · 永夜降临</b><i>CG</i></span></a><a class="poster" href="demo_media/hero/beihuigui.jpg" target="_blank" rel="noopener" data-k="beihuigui" data-name="北回归线以北" aria-label="北回归线以北" style="width: 64.43px;"><img src="demo_media/hero/beihuigui.jpg" alt="北回归线以北" loading="eager" decoding="async">
+      <span class="pcap"><b>北回归线以北</b><i>电影 · 2026</i></span></a><a class="poster" href="demo_media/hero/huangyanzhiqu.jpg" target="_blank" rel="noopener" data-k="huangyanzhiqu" data-name="谎言之躯" aria-label="谎言之躯" style="width: 60.14px;"><img src="demo_media/hero/huangyanzhiqu.jpg" alt="谎言之躯" loading="eager" decoding="async">
+      <span class="pcap"><b>谎言之躯</b><i>电影 · 2026</i></span></a><a class="poster" href="demo_media/hero/teliduxing.jpg" target="_blank" rel="noopener" data-k="teliduxing" data-name="特立独行" aria-label="特立独行" style="width: 56.54px;"><img src="demo_media/hero/teliduxing.jpg" alt="特立独行" loading="eager" decoding="async">
+      <span class="pcap"><b>特立独行</b><i>电影 · 2026</i></span></a><a class="poster" href="demo_media/hero/endfield.jpg" target="_blank" rel="noopener" data-k="endfield" data-name="明日方舟：终末地 · 莱万汀" aria-label="明日方舟：终末地 · 莱万汀" style="width: 160.52px;"><img src="demo_media/hero/endfield.jpg" alt="明日方舟：终末地 · 莱万汀" loading="eager" decoding="async">
+      <span class="pcap"><b>明日方舟：终末地 · 莱万汀</b><i>CG</i></span></a><a class="poster" href="demo_media/hero/shenghuan.jpg" target="_blank" rel="noopener" data-k="shenghuan" data-name="生还" aria-label="生还" style="width: 64.43px;"><img src="demo_media/hero/shenghuan.jpg" alt="生还" loading="eager" decoding="async">
+      <span class="pcap"><b>生还</b><i>电影 · 2025</i></span></a><a class="poster" href="demo_media/hero/ziyegui.jpg" target="_blank" rel="noopener" data-k="ziyegui" data-name="子夜归" aria-label="子夜归" style="width: 50.71px;"><img src="demo_media/hero/ziyegui.jpg" alt="子夜归" loading="eager" decoding="async">
+      <span class="pcap"><b>子夜归</b><i>剧集</i></span></a><a class="poster" href="demo_media/hero/shaoxiajixi.jpg" target="_blank" rel="noopener" data-k="shaoxiajixi" data-name="少侠逆袭攻略" aria-label="少侠逆袭攻略" style="width: 64.21px;"><img src="demo_media/hero/shaoxiajixi.jpg" alt="少侠逆袭攻略" loading="eager" decoding="async">
+      <span class="pcap"><b>少侠逆袭攻略</b><i>剧集 · 2026</i></span></a><a class="poster" href="demo_media/hero/mingyue.jpg" target="_blank" rel="noopener" data-k="mingyue" data-name="明月苍茫" aria-label="明月苍茫" style="width: 50.71px;"><img src="demo_media/hero/mingyue.jpg" alt="明月苍茫" loading="eager" decoding="async">
+      <span class="pcap"><b>明月苍茫</b><i>剧集</i></span></a><a class="poster" href="demo_media/hero/qunxing.jpg" target="_blank" rel="noopener" data-k="qunxing" data-name="群星闪耀时" aria-label="群星闪耀时" style="width: 64.43px;"><img src="demo_media/hero/qunxing.jpg" alt="群星闪耀时" loading="eager" decoding="async">
+      <span class="pcap"><b>群星闪耀时</b><i>电影 · 2026</i></span></a><a class="poster" href="demo_media/hero/xingyuezhengtu.jpg" target="_blank" rel="noopener" data-k="xingyuezhengtu" data-name="星月征途" aria-label="星月征途" style="width: 60.14px;"><img src="demo_media/hero/xingyuezhengtu.jpg" alt="星月征途" loading="eager" decoding="async">
+      <span class="pcap"><b>星月征途</b><i>剧集 · 2026</i></span></a><a class="poster" href="demo_media/hero/nezha2.jpg" target="_blank" rel="noopener" data-k="nezha2" data-name="哪吒之魔童闹海" aria-label="哪吒之魔童闹海" style="width: 64.43px;"><img src="demo_media/hero/nezha2.jpg" alt="哪吒之魔童闹海" loading="eager" decoding="async">
+      <span class="pcap"><b>哪吒之魔童闹海</b><i>电影 · 2025</i></span></a><a class="poster" href="demo_media/hero/hotpot.jpg" target="_blank" rel="noopener" data-k="hotpot" data-name="火锅艺术家" aria-label="火锅艺术家" style="width: 64.10px;"><img src="demo_media/hero/hotpot.jpg" alt="火锅艺术家" loading="eager" decoding="async">
+      <span class="pcap"><b>火锅艺术家</b><i>电影 · 2025</i></span></a><a class="poster" href="demo_media/hero/wuzhen.jpg" target="_blank" rel="noopener" data-k="wuzhen" data-name="永劫无间 · 巫真" aria-label="永劫无间 · 巫真" style="width: 160.52px;"><img src="demo_media/hero/wuzhen.jpg" alt="永劫无间 · 巫真" loading="eager" decoding="async">
+      <span class="pcap"><b>永劫无间 · 巫真</b><i>CG</i></span></a><a class="poster" href="demo_media/hero/earth3.jpg" target="_blank" rel="noopener" data-k="earth3" data-name="流浪地球3" aria-label="流浪地球3" style="width: 64.43px;"><img src="demo_media/hero/earth3.jpg" alt="流浪地球3" loading="eager" decoding="async">
+      <span class="pcap"><b>流浪地球3</b><i>电影 · 2027</i></span></a><a class="poster" href="demo_media/hero/shoulongzhe.jpg" target="_blank" rel="noopener" data-k="shoulongzhe" data-name="守龙者" aria-label="守龙者" style="width: 63.57px;"><img src="demo_media/hero/shoulongzhe.jpg" alt="守龙者" loading="eager" decoding="async">
+      <span class="pcap"><b>守龙者</b><i>电影 · 2024</i></span></a><a class="poster" href="demo_media/hero/yuelin.jpg" target="_blank" rel="noopener" data-k="yuelin" data-name="月鳞绮纪" aria-label="月鳞绮纪" style="width: 60.14px;"><img src="demo_media/hero/yuelin.jpg" alt="月鳞绮纪" loading="eager" decoding="async">
+      <span class="pcap"><b>月鳞绮纪</b><i>剧集</i></span></a></div></div><div class="strip bottom"><div class="track" style="transform: translate3d(-49.11px, 0px, 0px); column-gap: 28.04px;"><a class="poster" href="demo_media/hero/wangu.jpg" target="_blank" rel="noopener" data-k="wangu" data-name="万古最强宗" aria-label="万古最强宗" style="width: 50.71px;"><img src="demo_media/hero/wangu.jpg" alt="万古最强宗" loading="eager" decoding="async">
+      <span class="pcap"><b>万古最强宗</b><i>剧集</i></span></a><a class="poster" href="demo_media/hero/jiubu.jpg" target="_blank" rel="noopener" data-k="jiubu" data-name="九部的检察官" aria-label="九部的检察官" style="width: 50.71px;"><img src="demo_media/hero/jiubu.jpg" alt="九部的检察官" loading="eager" decoding="async">
+      <span class="pcap"><b>九部的检察官</b><i>剧集 · 2024</i></span></a><a class="poster" href="demo_media/hero/tianyuan.jpg" target="_blank" rel="noopener" data-k="tianyuan" data-name="王者荣耀 · 敬我三分 / 天元" aria-label="王者荣耀 · 敬我三分 / 天元" style="width: 160.52px;"><img src="demo_media/hero/tianyuan.jpg" alt="王者荣耀 · 敬我三分 / 天元" loading="eager" decoding="async">
+      <span class="pcap"><b>王者荣耀 · 敬我三分 / 天元</b><i>CG</i></span></a><a class="poster" href="demo_media/hero/xiaoyao.jpg" target="_blank" rel="noopener" data-k="xiaoyao" data-name="逍遥" aria-label="逍遥" style="width: 50.71px;"><img src="demo_media/hero/xiaoyao.jpg" alt="逍遥" loading="eager" decoding="async">
+      <span class="pcap"><b>逍遥</b><i>剧集</i></span></a><a class="poster" href="demo_media/hero/hearthstone.jpg" target="_blank" rel="noopener" data-k="hearthstone" data-name="炉石传说 · 大地的裂变" aria-label="炉石传说 · 大地的裂变" style="width: 160.52px;"><img src="demo_media/hero/hearthstone.jpg" alt="炉石传说 · 大地的裂变" loading="eager" decoding="async">
+      <span class="pcap"><b>炉石传说 · 大地的裂变</b><i>CG</i></span></a><a class="poster" href="demo_media/hero/endfield.jpg" target="_blank" rel="noopener" data-k="endfield" data-name="明日方舟：终末地 · 莱万汀" aria-label="明日方舟：终末地 · 莱万汀" style="width: 160.52px;"><img src="demo_media/hero/endfield.jpg" alt="明日方舟：终末地 · 莱万汀" loading="eager" decoding="async">
+      <span class="pcap"><b>明日方舟：终末地 · 莱万汀</b><i>CG</i></span></a><a class="poster" href="demo_media/hero/shenghuan.jpg" target="_blank" rel="noopener" data-k="shenghuan" data-name="生还" aria-label="生还" style="width: 64.43px;"><img src="demo_media/hero/shenghuan.jpg" alt="生还" loading="eager" decoding="async">
+      <span class="pcap"><b>生还</b><i>电影 · 2025</i></span></a><a class="poster" href="demo_media/hero/ziyegui.jpg" target="_blank" rel="noopener" data-k="ziyegui" data-name="子夜归" aria-label="子夜归" style="width: 50.71px;"><img src="demo_media/hero/ziyegui.jpg" alt="子夜归" loading="eager" decoding="async">
+      <span class="pcap"><b>子夜归</b><i>剧集</i></span></a><a class="poster" href="demo_media/hero/linglong2.jpg" target="_blank" rel="noopener" data-k="linglong2" data-name="灵笼 第二季" aria-label="灵笼 第二季" style="width: 51.55px;"><img src="demo_media/hero/linglong2.jpg" alt="灵笼 第二季" loading="eager" decoding="async">
+      <span class="pcap"><b>灵笼 第二季</b><i>番剧 · 2025</i></span></a><a class="poster" href="demo_media/hero/xiaochengliangfang.jpg" target="_blank" rel="noopener" data-k="xiaochengliangfang" data-name="小城良方" aria-label="小城良方" style="width: 60.14px;"><img src="demo_media/hero/xiaochengliangfang.jpg" alt="小城良方" loading="eager" decoding="async">
+      <span class="pcap"><b>小城良方</b><i>剧集 · 2026</i></span></a><a class="poster" href="demo_media/hero/mingyue.jpg" target="_blank" rel="noopener" data-k="mingyue" data-name="明月苍茫" aria-label="明月苍茫" style="width: 50.71px;"><img src="demo_media/hero/mingyue.jpg" alt="明月苍茫" loading="eager" decoding="async">
+      <span class="pcap"><b>明月苍茫</b><i>剧集</i></span></a><a class="poster" href="demo_media/hero/qunxing.jpg" target="_blank" rel="noopener" data-k="qunxing" data-name="群星闪耀时" aria-label="群星闪耀时" style="width: 64.43px;"><img src="demo_media/hero/qunxing.jpg" alt="群星闪耀时" loading="eager" decoding="async">
+      <span class="pcap"><b>群星闪耀时</b><i>电影 · 2026</i></span></a><a class="poster" href="demo_media/hero/xingyuezhengtu.jpg" target="_blank" rel="noopener" data-k="xingyuezhengtu" data-name="星月征途" aria-label="星月征途" style="width: 60.14px;"><img src="demo_media/hero/xingyuezhengtu.jpg" alt="星月征途" loading="eager" decoding="async">
+      <span class="pcap"><b>星月征途</b><i>剧集 · 2026</i></span></a><a class="poster" href="demo_media/hero/shaoxiajixi.jpg" target="_blank" rel="noopener" data-k="shaoxiajixi" data-name="少侠逆袭攻略" aria-label="少侠逆袭攻略" style="width: 64.21px;"><img src="demo_media/hero/shaoxiajixi.jpg" alt="少侠逆袭攻略" loading="eager" decoding="async">
+      <span class="pcap"><b>少侠逆袭攻略</b><i>剧集 · 2026</i></span></a><a class="poster" href="demo_media/hero/mofangxiaojie.jpg" target="_blank" rel="noopener" data-k="mofangxiaojie" data-name="魔方小姐" aria-label="魔方小姐" style="width: 64.43px;"><img src="demo_media/hero/mofangxiaojie.jpg" alt="魔方小姐" loading="eager" decoding="async">
+      <span class="pcap"><b>魔方小姐</b><i>电影 · 2026</i></span></a><a class="poster" href="demo_media/hero/fanying.jpg" target="_blank" rel="noopener" data-k="fanying" data-name="凡应" aria-label="凡应" style="width: 160.52px;"><img src="demo_media/hero/fanying.jpg" alt="凡应" loading="eager" decoding="async">
+      <span class="pcap"><b>凡应</b><i>CG</i></span></a><a class="poster" href="demo_media/hero/earth3.jpg" target="_blank" rel="noopener" data-k="earth3" data-name="流浪地球3" aria-label="流浪地球3" style="width: 64.43px;"><img src="demo_media/hero/earth3.jpg" alt="流浪地球3" loading="eager" decoding="async">
+      <span class="pcap"><b>流浪地球3</b><i>电影 · 2027</i></span></a><a class="poster" href="demo_media/hero/oncehuman.jpg" target="_blank" rel="noopener" data-k="oncehuman" data-name="七日世界 · 雪国人生" aria-label="七日世界 · 雪国人生" style="width: 60.14px;"><img src="demo_media/hero/oncehuman.jpg" alt="七日世界 · 雪国人生" loading="eager" decoding="async">
+      <span class="pcap"><b>七日世界 · 雪国人生</b><i>CG</i></span></a><a class="poster" href="demo_media/hero/chunhuayan.jpg" target="_blank" rel="noopener" data-k="chunhuayan" data-name="春花焰" aria-label="春花焰" style="width: 67.65px;"><img src="demo_media/hero/chunhuayan.jpg" alt="春花焰" loading="eager" decoding="async">
       <span class="pcap"><b>春花焰</b><i>剧集 · 2024</i></span></a></div></div></div>
   <div class="torch" aria-hidden="true" style="transform: translate3d(669px, 1213px, 0px);"></div>
   <div class="hero-grid" aria-hidden="true"></div>
@@ -543,41 +633,7 @@
       <div class="bm-hud"><span>FX_SEQ // 07</span><span><b>●</b> SIGNAL LOCKED</span></div>
       <div class="bm-stage">
         <h1 class="sr-only">ZHOU HAIBIN — 周海斌 · Houdini FX</h1>
-        <svg class="wm" viewBox="0 0 1600 397" role="img" aria-label="zhouhaibin 2027">
-          <defs>
-            <linearGradient id="wmFill" x1="0" y1="0" x2=".18" y2="1">
-              <stop offset="0" stop-color="#ffffff"></stop>
-              <stop offset=".17" stop-color="#ffe6f0"></stop>
-              <stop offset=".45" stop-color="#ff85b0"></stop>
-              <stop offset=".67" stop-color="#ff2f78"></stop>
-              <stop offset=".86" stop-color="#ffb4cd"></stop>
-              <stop offset="1" stop-color="#ffffff"></stop>
-            </linearGradient>
-            <linearGradient id="wmSheen" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0" stop-color="#fff" stop-opacity="0"></stop>
-              <stop offset=".40" stop-color="#fff" stop-opacity="0"></stop>
-              <stop offset=".5" stop-color="#fff" stop-opacity=".95"></stop>
-              <stop offset=".60" stop-color="#fff" stop-opacity="0"></stop>
-              <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
-            </linearGradient>
-            <linearGradient id="wmScanGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="#fff" stop-opacity="0"></stop>
-              <stop offset=".5" stop-color="#fff" stop-opacity=".85"></stop>
-              <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
-            </linearGradient>
-            <mask id="wmMask" maskUnits="userSpaceOnUse" x="0" y="0" width="1600" height="397">
-              <image href="demo_media/brand/logo.png" x="0" y="0" width="1600" height="397"></image>
-            </mask>
-            <filter id="wmBlur" x="-25%" y="-60%" width="150%" height="220%"><feGaussianBlur stdDeviation="13"></feGaussianBlur></filter>
-            <filter id="wmBlurFar" x="-45%" y="-90%" width="190%" height="280%"><feGaussianBlur stdDeviation="34"></feGaussianBlur></filter>
-          </defs>
-          <rect x="0" y="0" width="1600" height="397" fill="#ff2f78" mask="url(#wmMask)" filter="url(#wmBlurFar)" opacity=".7"></rect>
-          <rect x="0" y="0" width="1600" height="397" fill="#ff2f78" mask="url(#wmMask)" filter="url(#wmBlur)" opacity=".75"></rect>
-          <rect x="0" y="0" width="1600" height="397" fill="url(#wmFill)" mask="url(#wmMask)"></rect>
-          <rect class="ghost" x="0" y="0" width="1600" height="397" fill="#7dd3fc" mask="url(#wmMask)"></rect>
-          <rect class="sheen" x="-1600" y="0" width="1600" height="397" fill="url(#wmSheen)" mask="url(#wmMask)"></rect>
-          <rect class="scan" x="0" y="-420" width="1600" height="420" fill="url(#wmScanGrad)" mask="url(#wmMask)" opacity=".7"></rect>
-        </svg>
+        <img class="wm" src="demo_media/brand/logo_colored.png" alt="Zhou Haibin · VFX">
         <span class="yr" aria-hidden="true">2027</span>
         <span class="bm-c tl" aria-hidden="true"></span><span class="bm-c tr" aria-hidden="true"></span>
         <span class="bm-c bl" aria-hidden="true"></span><span class="bm-c br" aria-hidden="true"></span>
@@ -602,7 +658,6 @@
       <button class="btn primary" id="heroPlay">
         <svg viewBox="0 0 14 16" fill="currentColor"><path d="M0 1.5v13l13-6.5z"></path></svg>PLAY SHOWREEL
       </button>
-      <a class="btn cyan" href="#resume"><i class="dot"></i>RESUME ↗</a>
       <a class="btn gold" href="https://gitcode.com/Abin169/HouTools_zhb" target="_blank" rel="noopener">HOUTOOLS ↗</a>
       <span class="btn ghost soon" title="待定">MIND MAP · 待定</span>
     </div>
@@ -613,7 +668,7 @@
   </div>
 </header>
 
-<section class="blk" id="showreel">
+<section class="blk showreel-section" id="showreel">
   <div class="wrap">
     <div class="sec-head reveal in">
       <div>
@@ -621,7 +676,7 @@
         <h2>SHOWREEL<small data-dr-keys="showreel.sub" spellcheck="false" class=""><!--T:showreel.sub-->精选镜头混剪 · 点击播放<!--/T:showreel.sub--></small></h2>
       </div>
     </div>
-    <div class="player reveal in" id="player">
+    <div class="player reveal in bump-intro" id="player">
       <img class="poster" id="showreelPoster" alt="Showreel 封面" src="demo_media/posters/showreel_auto.jpg">
       <div class="dim"></div>
       <div class="lines"></div>
@@ -629,105 +684,51 @@
         <span class="ring"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg></span>
         <span class="lbl">PLAY REEL</span>
       </button>
-      <video id="showreelVideo" preload="metadata" playsinline="" controls="" src="demo_media/showreel/showreel_2025.mp4"></video>
-      <div class="pmsg">SHOWREEL 视频待替换<small>demo_media/showreel/showreel_2025.mp4</small></div>
-    </div>
-
-  </div>
-</section>
-
-<section class="blk" id="resume">
-  <div class="wrap">
-    <div class="sec-head reveal in">
-      <div>
-        <div class="idx">02 / RESUME</div>
-        <h2>RESUME<small data-dr-keys="resume.sub" spellcheck="false" class=""><!--T:resume.sub-->从业记录 · 2027<!--/T:resume.sub--></small></h2>
-      </div>
-      <a class="rdl" href="demo_media/resume/周海斌_影视特效_简历_2027.pdf" target="_blank" rel="noopener"><i>PDF</i>下载简历 ↓</a>
-    </div>
-
-    <div class="rgrid reveal in">
-      <aside class="rcard">
-        <div class="rhead">
-          <span class="rphoto"><img src="demo_media/brand/portrait.jpg" alt="周海斌 证件照"></span>
-          <div><b>周海斌</b><i>ZHOU HAIBIN</i></div>
-        </div>
-
-        <dl class="rmeta">
-          <div><dt>岗位</dt><dd data-dr-keys="resume.pos" spellcheck="false" class="">Houdini FX<!--/T:resume.pos--></dd></div>
-          <div><dt>经验</dt><dd data-dr-keys="resume.exp" spellcheck="false" class=""><!--T:resume.exp-->5 年<!--/T:resume.exp--></dd></div>
-          <div><dt>期望</dt><dd data-dr-keys="resume.salary" spellcheck="false" class=""><!--T:resume.salary-->15–20K&nbsp;<!--/T:resume.salary--></dd></div>
-          <div><dt>电话</dt><dd data-dr-keys="resume.phone" spellcheck="false" class=""><!--T:resume.phone--><a data-dr-href="tel:15919478293">15919478293</a><!--/T:resume.phone--></dd></div>
-          <div><dt>邮箱</dt><dd data-dr-keys="resume.mail" spellcheck="false" class=""><!--T:resume.mail--><a data-dr-href="mailto:1697619277@qq.com">1697619277@qq.com</a><!--/T:resume.mail--></dd></div>
-        </dl>
-
-        <div class="rblk">
-          <span class="rlbl">SUMMARY</span>
-          <p data-dr-keys="resume.summary" spellcheck="false" class=""><!--T:resume.summary-->熟练使用 Houdini / Nuke / Maya，熟悉 Ps、Ae、DaVinci、UE5、Clarisse 工作流；对 VEX、Python 与 AI 辅助流程有深入理解，具备美术基础，能为视觉效果与叙事节奏提供稳定支持。<!--/T:resume.summary--></p>
-        </div>
-
-        <div class="rblk" data-dr-keys="resume.tools" spellcheck="false">
-          <span class="rlbl">TOOLS</span>
-          <!--T:resume.tools--><div class="rchips"><span class="k">Houdini</span><span class="k">Nuke</span><span class="k">Maya</span><span>AI</span><span>VEX</span><span>Python</span><span>PySide6</span><span>Arnold</span><span>UE5</span><span>Clarisse</span><span>After Effects</span><span>Photoshop</span><span>DaVinci</span></div><!--/T:resume.tools-->
-        </div>
-
-        <div class="rblk">
-          <span class="rlbl">EDUCATION</span>
-          <b class="redu" data-dr-keys="resume.edu_school" spellcheck="false"><!--T:resume.edu_school-->成都纺织高等专科学校<!--/T:resume.edu_school--><i data-dr-keys="resume.edu_detail" spellcheck="false" class=""><!--T:resume.edu_detail-->大专 · 数字媒体应用技术 · 2018–2021<!--/T:resume.edu_detail--></i></b>
-        </div>
-
-        <div class="rblk">
-          <span class="rlbl">PORTFOLIO</span>
-          <div class="rlink">
-            <a href="#showreel">SHOWREEL 2027 ↗</a>
-            <a href="https://gitcode.com/Abin169/HouTools_zhb" target="_blank" rel="noopener">HOUTOOLS ↗</a>
-            <span class="rsoon">MIND MAP · 待定</span>
+      <video id="showreelVideo" preload="metadata" playsinline src="demo_media/showreel/showreel_web.mp4"></video>
+      <div class="reel-bumper reel-intro" id="reelIntro" aria-hidden="true">
+        <div class="ri-grid"></div>
+        <div class="ri-scan"></div>
+        <div class="ri-ring"></div>
+        <div class="ri-sweep"></div>
+        <div class="ri-hud tl">FX_SEQ <b>//</b> REEL_2027</div>
+        <div class="ri-hud br">ZHB <b>///</b> VFX SHOWREEL</div>
+        <div class="ri-core">
+          <div class="ri-kicker">ZHOU HAIBIN · VISUAL EFFECTS</div>
+          <div class="ri-mark">
+            <img src="demo_media/brand/logo_colored.png" alt="Zhou Haibin">
           </div>
+          <div class="ri-rule"></div>
+          <div class="ri-sub">HOUDINI · VEX · PYTHON · FX PIPELINE</div>
         </div>
-
-        <div class="rfoot"><span>UPDATED 2026.11</span><b>A4 · PDF</b></div>
-      </aside>
-
-      <div class="rtime">
-        <ol class="rtl">
-          <li class="rj now" data-dr-keys="job1.time,job1.company,job1.role,job1.line1,job1.line2,job1.line3" spellcheck="false">
-            <!--T:job1.time--><div class="ry">2025.02 — 2026.11<b>1Y 10M</b></div><!--/T:job1.time-->
-            <!--T:job1.company--><h3>成都三素艺合数字科技有限公司</h3><!--/T:job1.company-->
-            <!--T:job1.role--><span class="rr">影视特效</span><!--/T:job1.role-->
-            <!--T:job1.line1--><p class="rp"><em>电影</em><span><i class="nw">《流浪地球3》</i><i class="nw">《北回归线以北》</i><i class="nw">《爆水管》</i><i class="nw">《特立独行》</i><i class="nw">《群星闪耀时》</i><i class="nw">《谎言之躯》</i><i class="nw">《三国的星空》</i><i class="nw">《生还》</i><i class="nw">《魔方小姐》</i></span></p><!--/T:job1.line1-->
-            <!--T:job1.line2--><p class="rp"><em>CG</em><span><i class="nw">《凡应》</i>、<i class="nw">《永劫无间》</i>"巫真"、<i class="nw">《炉石传说》</i>"大地的裂变"、<i class="nw">《明日方舟：终末地》</i>"莱万汀"</span></p><!--/T:job1.line2-->
-            <!--T:job1.line3--><p class="rp"><em>剧集</em><span><i class="nw">《明日乐园》</i><i class="nw">《明月苍茫》</i><i class="nw">《万古最强宗》</i><i class="nw">《逍遥》</i><i class="nw">《月鳞绮纪》</i><i class="nw">《子夜归》</i><i class="nw">《小城良方》</i><i class="nw">《星月征途》</i><i class="nw">《少侠逆袭攻略》</i><i class="nw">《灵笼2》</i></span></p><!--/T:job1.line3-->
-          </li>
-          <li class="rj" data-dr-keys="job2.time,job2.company,job2.role,job2.line1,job2.line2" spellcheck="false">
-            <!--T:job2.time--><div class="ry">2024.07 — 2025.01<b>0Y 7M</b></div><!--/T:job2.time-->
-            <!--T:job2.company--><h3>成都千鸟文化传播有限公司</h3><!--/T:job2.company-->
-            <!--T:job2.role--><span class="rr">影视特效</span><!--/T:job2.role-->
-            <!--T:job2.line1--><p class="rp"><em>电影</em><span><i class="nw">《哪吒之魔童闹海》</i></span></p><!--/T:job2.line1-->
-            <!--T:job2.line2--><p class="rp"><em>CG</em><span><i class="nw">《王者荣耀》</i>"敬我三分""天元"、<i class="nw">《七日世界》</i>"雪国人生"、<i class="nw">《漫威争锋》</i>"永夜降临"</span></p><!--/T:job2.line2-->
-          </li>
-          <li class="rj" data-dr-keys="job3.time,job3.company,job3.role,job3.line1,job3.line2,job3.line3" spellcheck="false">
-            <!--T:job3.time--><div class="ry">2022.04 — 2024.07<b>2Y 3M</b></div><!--/T:job3.time-->
-            <!--T:job3.company--><h3>华强方特（深圳）电影有限公司</h3><!--/T:job3.company-->
-            <!--T:job3.role--><span class="rr">影视特效</span><!--/T:job3.role-->
-            <!--T:job3.line1--><p class="rp"><em>内部</em><span><i class="nw">《生命之光》</i><i class="nw">《大道巍峨》</i><i class="nw">《梁祝》</i><i class="nw">《水岸梦境》</i><i class="nw">《古越情歌》</i></span></p><!--/T:job3.line1-->
-            <!--T:job3.line2--><p class="rp"><em>电影</em><span><i class="nw">《守龙者》</i><i class="nw">《火锅艺术家》</i></span></p><!--/T:job3.line2-->
-            <!--T:job3.line3--><p class="rp"><em>剧集</em><span><i class="nw">《九部的检察官》</i><i class="nw">《春花焰》</i></span></p><!--/T:job3.line3-->
-          </li>
-          <li class="rj" data-dr-keys="job4.time,job4.company,job4.role,job4.line1" spellcheck="false">
-            <!--T:job4.time--><div class="ry">2021.09 — 2022.04<b>0Y 7M</b></div><!--/T:job4.time-->
-            <!--T:job4.company--><h3>墨境天育职业技能培训</h3><!--/T:job4.company-->
-            <!--T:job4.role--><span class="rr">影视特效 · 进修</span><!--/T:job4.role-->
-            <!--T:job4.line1--><p class="rp"><em>内容</em><span>系统学习 Houdini、Nuke、Maya 等软件，完成特效基础与流程训练。</span></p><!--/T:job4.line1-->
-          </li>
-          <li class="rj" data-dr-keys="job5.time,job5.company,job5.role,job5.line1" spellcheck="false">
-            <!--T:job5.time--><div class="ry">2020.10 — 2021.08<b>0Y 10M</b></div><!--/T:job5.time-->
-            <!--T:job5.company--><h3>成都超越片场摄影设备租赁有限公司</h3><!--/T:job5.company-->
-            <!--T:job5.role--><span class="rr">摄影助理</span><!--/T:job5.role-->
-            <!--T:job5.line1--><p class="rp"><em>内容</em><span>配合灯光师、摄影师完成现场拍摄的辅助工作，熟悉实拍流程与镜头语言。</span></p><!--/T:job5.line1-->
-          </li>
-        </ol>
       </div>
+      <div class="reel-bumper reel-outro" id="reelOutro" aria-hidden="true">
+        <div class="ri-grid"></div>
+        <div class="ri-scan"></div>
+        <div class="ri-ring"></div>
+        <div class="ri-sweep"></div>
+        <div class="ri-hud tl">REEL_END <b>//</b> 2027</div>
+        <div class="ri-hud br">ZHB <b>///</b> THANKS FOR WATCHING</div>
+        <div class="ri-core">
+          <div class="ri-kicker">END OF SHOWREEL · 2027</div>
+          <div class="ro-thanks">THANK YOU<br>FOR <em>WATCHING</em></div>
+          <div class="ri-rule"></div>
+          <div class="ri-sub">ZHOU HAIBIN · VISUAL EFFECTS · HOUDINI FX</div>
+        </div>
+      </div>
+      <div class="pctrl" id="pctrl">
+        <button class="pc-play" id="pcPlay" type="button" aria-label="播放/暂停">
+          <svg id="pcPlayIcon" viewBox="0 0 14 16"><path d="M0 1.5v13l13-6.5z"></path></svg>
+        </button>
+        <div class="pc-track" id="pcTrack" role="slider" aria-label="播放进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+          <div class="pc-fill" id="pcFill"></div>
+          <div class="pc-head" id="pcHead"></div>
+        </div>
+        <div class="pc-time" id="pcTime">0:00 / 0:00</div>
+      </div>
+      <div class="pmsg">SHOWREEL 视频待替换<small>demo_media/showreel/showreel_web.mp4</small></div>
     </div>
+    </div>
+
   </div>
 </section>
 
@@ -740,6 +741,7 @@
 </footer>
 
 <script src="demo_media/showreel/auto.js" onerror="void 0"></script>
+<script src="demo_media/brand/logo_paths.js"></script>
 <script>
 const Q = new URLSearchParams(location.search);
 if (Q.has('noanim')) document.body.classList.add('no-anim');
@@ -750,7 +752,7 @@ if (Q.has('test')) document.body.classList.add('test');
    ========================================================= */
 const DATA = {
   showreel: {
-    src: 'demo_media/showreel/showreel_2025.mp4',
+    src: 'demo_media/showreel/showreel_web.mp4',
     poster: 'demo_media/posters/showreel.jpg',
     title: 'SHOWREEL',
     meta: '个人作品集 · 精选镜头混剪'
@@ -1009,7 +1011,9 @@ const ICONS = {
 })();
 function $$(s){ return [...document.querySelectorAll(s)]; }
 
-/* ---------- Showreel（优先用 auto.js 自动识别的结果） ---------- */
+/* ---------- Showreel（统一时间轴：片头 → 正片 → 片尾，共用一条进度条） ----------
+   masterTime 是唯一时钟。片头/片尾用负 animation-delay 定格到对应帧，正片用 video.currentTime。
+   拖动进度条可跳到任意段；video 时长由 loadedmetadata 回填。 */
 (function initShowreel(){
   const A = window.SHOWREEL_AUTO;
   const s = Object.assign({}, DATA.showreel, (A && A.src) ? {
@@ -1023,26 +1027,144 @@ function $$(s){ return [...document.querySelectorAll(s)]; }
   if (msg) msg.textContent = s.src;
   const v = $('#showreelVideo');
   v.src = s.src;
-  const play = () => {
-    if (v.error) { $('#player').classList.add('missing'); return; }
-    $('#player').classList.add('playing');
-    v.play().catch(()=>{});
+
+  const player  = $('#player');
+  const intro   = $('#reelIntro');
+  const outro   = $('#reelOutro');
+  const track   = $('#pcTrack');
+  const fill    = $('#pcFill');
+  const head    = $('#pcHead');
+  const timeEl  = $('#pcTime');
+  const playBtn = $('#pcPlay');
+  const playIco = $('#pcPlayIcon');
+
+  const BUMP = 3.05;                                   // 片头/片尾动画时长（与 CSS 一致）
+  const INTRO = Q.has('noanim') ? 0 : BUMP;            // noanim 跳过片头片尾
+  const OUTRO = Q.has('noanim') ? 0 : BUMP;
+  let VDUR = isFinite(v.duration) && v.duration > 0 ? v.duration : 102.6;
+  const TOTAL = () => INTRO + VDUR + OUTRO;
+
+  let masterTime = 0;                                  // 统一时间轴当前秒数
+  let playing = false, dragging = false, raf = 0, last = 0, syncing = false;
+
+  const clamp = (x,a,b) => Math.max(a, Math.min(b, x));
+  const fmt = x => { x = Math.max(0, Math.floor(x)); return Math.floor(x/60) + ':' + String(x%60).padStart(2,'0'); };
+
+  // 把某个 bumper 的动画定格到段内 t 秒（0..BUMP）
+  const freeze = (bumper, t) => {
+    const d = (-clamp(t, 0, BUMP)).toFixed(3) + 's';
+    bumper.querySelectorAll('.ri-grid,.ri-scan,.ri-sweep,.ri-ring,.ri-kicker,.ri-mark,.ro-thanks,.ri-rule,.ri-sub,.ri-hud')
+          .forEach(el => { el.style.animationDelay = d; });
   };
+
+  // 依据 masterTime 渲染三段状态
+  const render = () => {
+    const T = TOTAL();
+    masterTime = clamp(masterTime, 0, T);
+    const pct = T > 0 ? (masterTime / T) * 100 : 0;
+    fill.style.width = pct + '%';
+    head.style.left = pct + '%';
+    timeEl.textContent = fmt(masterTime) + ' / ' + fmt(T);
+    track.setAttribute('aria-valuenow', Math.round(pct));
+
+    const inIntro = masterTime < INTRO;
+    const inOutro = !inIntro && masterTime >= INTRO + VDUR;
+    const inVideo = !inIntro && !inOutro;
+
+    player.classList.toggle('bump-intro', inIntro);
+    player.classList.toggle('vid', inVideo);
+    player.classList.toggle('bump-outro', inOutro);
+    playIco.innerHTML = playing
+      ? '<path d="M2 1h3v14H2zM9 1h3v14H9z"></path>'
+      : '<path d="M0 1.5v13l13-6.5z"></path>';
+    playBtn.setAttribute('aria-label', playing ? '暂停' : '播放');
+
+    // 静止预览时定格到“停留帧”（字标完整可见）；播放中按真实段内时间推进
+    if (inIntro) { freeze(intro, playing ? masterTime : BUMP * 0.45); v.pause(); }
+    else if (inOutro) { freeze(outro, playing ? (masterTime - INTRO - VDUR) : BUMP * 0.45); v.pause(); }
+    else {
+      const vt = masterTime - INTRO;
+      syncing = true;
+      if (Math.abs(v.currentTime - vt) > 0.35) { try { v.currentTime = vt; } catch (_) {} }
+      if (playing && v.paused) v.play().catch(()=>{});
+      if (!playing && !v.paused) v.pause();
+      syncing = false;
+    }
+  };
+
+  const tick = ts => {
+    if (!playing || dragging) { last = ts; raf = requestAnimationFrame(tick); return; }
+    if (!last) last = ts;
+    const dt = (ts - last) / 1000; last = ts;
+    masterTime += dt;
+    const T = TOTAL();
+    if (masterTime >= T) masterTime = 0;                // 整条时间轴循环（片头→正片→片尾）
+    render();
+    raf = requestAnimationFrame(tick);
+  };
+
+  const play = () => {
+    if (v.error) { player.classList.add('missing'); return; }
+    playing = true; last = 0; render();
+  };
+  const pause = () => { playing = false; v.pause(); render(); };
+  const toggle = () => { playing ? pause() : play(); };
+
+  // 拖动 / 点击进度条：按指针位置映射到统一时间轴
+  const seekFromEvent = e => {
+    const r = track.getBoundingClientRect();
+    if (!r.width) return;
+    masterTime = clamp((e.clientX - r.left) / r.width, 0, 1) * TOTAL();
+    render();
+  };
+  track.addEventListener('pointerdown', e => {
+    dragging = true; track.setPointerCapture(e.pointerId); seekFromEvent(e);
+  });
+  track.addEventListener('pointermove', e => { if (dragging) seekFromEvent(e); });
+  const endDrag = e => {
+    if (!dragging) return;
+    dragging = false;
+    try { track.releasePointerCapture(e.pointerId); } catch (_) {}
+    // 拖动结束后从片头/片尾恢复播放（若在正片段则 video 已按 currentTime 就位）
+    last = 0;
+  };
+  track.addEventListener('pointerup', endDrag);
+  track.addEventListener('pointercancel', endDrag);
+  track.addEventListener('keydown', e => {
+    const step = e.shiftKey ? 10 : 5;
+    if (e.key === 'ArrowRight') { masterTime = clamp(masterTime + step, 0, TOTAL()); render(); e.preventDefault(); }
+    if (e.key === 'ArrowLeft')  { masterTime = clamp(masterTime - step, 0, TOTAL()); render(); e.preventDefault(); }
+  });
+
+  // 点击视频/片头/片尾画面 = 播放/暂停切换；左下角按钮同样切换
+  [playBtn, v, intro, outro].forEach(el => el.addEventListener('click', e => { e.stopPropagation(); toggle(); }));
   $('#showreelPlay').addEventListener('click', play);
   $('#heroPlay').addEventListener('click', () => {
-    document.getElementById('showreel').scrollIntoView({behavior:'smooth'});
+    document.getElementById('showreel').scrollIntoView({ behavior:'smooth' });
     setTimeout(play, 650);
   });
-  v.addEventListener('ended', () => { v.pause(); v.currentTime = 0; $('#player').classList.remove('playing'); });
-  v.addEventListener('error', () => { $('#player').classList.add('missing'); });
-})();
 
+  v.addEventListener('loadedmetadata', () => {
+    if (isFinite(v.duration) && v.duration > 0) VDUR = v.duration;
+    render();
+  });
+  v.addEventListener('timeupdate', () => {
+    // 正片播放中以 video 为准反向校准 masterTime，避免长片累积漂移
+    if (playing && !dragging && !syncing && player.classList.contains('vid')) {
+      masterTime = INTRO + v.currentTime;
+    }
+  });
+  v.addEventListener('error', () => { playing = false; player.classList.add('missing'); render(); });
+
+  render();
+  raf = requestAnimationFrame(tick);
+})();
 /* ---------- 工具和 HDA（区块已下线，代码保留但不再渲染） ---------- */
 
 /* ---------- 交互 ---------- */
 (function initNav(){
   const nav = $('#nav');
-  const secs = ['top','showreel','resume'].map(id => document.getElementById(id));
+  const secs = ['top','showreel'].map(id => document.getElementById(id));
   const links = [...document.querySelectorAll('.nav-links a')];
   const sync = () => {
     nav.classList.toggle('scrolled', scrollY > 12);
@@ -1105,12 +1227,120 @@ function $$(s){ return [...document.querySelectorAll(s)]; }
   }), { threshold: .12 });
   $$('.reveal').forEach(el => io.observe(el));
 })();
-</script>
+/* ===== 字标出场动画：霓虹描边逐笔绘制 + 色差 ===== */
+(function initLogoIntro(){
+  var stage = document.querySelector('.bm-stage');
+  var logo = stage && stage.querySelector('.wm');
+  if (!stage || !logo || !window.LOGO_PATHS || !window.LOGO_PATHS.length) return;
+  if (document.body.classList.contains('no-anim')) return;
+  if (/[?&]noanim\b/.test(location.search)) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+  var NS = 'http://www.w3.org/2000/svg';
+  var VW = 0, VH = 0;
+  var fx = null, builtW = 0, playing = false, timers = [];
+  var totalMs = 1200;
 
+  function clearTimers(){ timers.forEach(clearTimeout); timers = []; }
+  function place(){
+    fx.style.left = logo.offsetLeft + 'px';
+    fx.style.top = logo.offsetTop + 'px';
+    fx.style.width = logo.offsetWidth + 'px';
+    fx.style.height = logo.offsetHeight + 'px';
+  }
 
+  function build(){
+    var w = logo.offsetWidth, h = logo.offsetHeight;
+    if (!w || !h) return false;
+    VW = logo.naturalWidth || 1600;
+    VH = logo.naturalHeight || 397;
+    if (fx && builtW === w) { place(); return true; }
+    if (fx && fx.parentNode) fx.parentNode.removeChild(fx);
+    fx = document.createElement('div');
+    fx.className = 'wm-fx';
+    fx.setAttribute('aria-hidden', 'true');
+    var svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 ' + VW + ' ' + VH);
+    svg.setAttribute('preserveAspectRatio', 'none');
+    var groups = [];
+    var maxEnd = 0;
+    window.LOGO_PATHS.forEach(function (p) {
+      var g = document.createElementNS(NS, 'g');
+      g.setAttribute('class', 'cg');
+      ['main', 'cy', 'mg'].forEach(function (cls) {
+        var path = document.createElementNS(NS, 'path');
+        path.setAttribute('d', p.d);
+        path.setAttribute('class', cls);
+        if (cls === 'cy') path.setAttribute('transform', 'translate(6,-2)');
+        if (cls === 'mg') path.setAttribute('transform', 'translate(-6,3)');
+        g.appendChild(path);
+      });
+      svg.appendChild(g);
+      groups.push({ g: g, x: p.x });
+    });
+    fx.appendChild(svg);
+    var flash = document.createElement('i');
+    flash.className = 'flash';
+    fx.appendChild(flash);
+    stage.appendChild(fx);
+    place();
+    builtW = w;
+    groups.forEach(function (item) {
+      var len = item.g.querySelector('path').getTotalLength() || 100;
+      var dur = Math.min(0.78, Math.max(0.22, len / 1100));
+      var delay = 0.05 + (item.x / VW) * 0.55;
+      item.g.style.setProperty('--len', len.toFixed(1));
+      item.g.style.setProperty('--dur', dur.toFixed(2) + 's');
+      item.g.style.setProperty('--delay', delay.toFixed(2) + 's');
+      maxEnd = Math.max(maxEnd, delay + dur);
+    });
+    totalMs = maxEnd * 1000;
+    flash.style.setProperty('--fd', (totalMs * 0.8 / 1000).toFixed(2) + 's');
+    return true;
+  }
 
+  function play(){
+    if (!build() || playing) return;
+    playing = true;
+    clearTimers();
+    stage.classList.remove('wm-done', 'wm-glitch');
+    stage.classList.add('wm-animating');
+    fx.classList.remove('play');
+    fx.style.opacity = '';
+    void fx.offsetWidth;
+    fx.classList.add('play');
+    timers.push(setTimeout(function () {
+      stage.classList.remove('wm-animating');
+      stage.classList.add('wm-done');
+      stage.classList.add('wm-glitch');
+      fx.style.opacity = '0';
+      timers.push(setTimeout(function () {
+        stage.classList.remove('wm-glitch');
+        fx.classList.remove('play');
+        fx.style.opacity = '';
+        stage.classList.remove('wm-done');
+        playing = false;
+      }, 900));
+    }, totalMs + 60));
+  }
 
-</body></html>
+  logo.addEventListener('click', function () { play(); }, { passive: true });
+
+  var started = false;
+  function start(){ if (started) return; started = true; play(); }
+  if (logo.complete) setTimeout(start, 120);
+  else logo.addEventListener('load', function(){ setTimeout(start, 120); }, { once: true });
+  setTimeout(start, 1200);
+
+  var rz;
+  window.addEventListener('resize', function () {
+    clearTimeout(rz);
+    rz = setTimeout(function () {
+      if (playing || !fx) return;
+      builtW = 0;
+      build();
+    }, 300);
+  });
+})();</script>
 </body>
 </html>
