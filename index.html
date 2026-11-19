@@ -190,7 +190,6 @@
   .btn .dot{width:5px;height:5px;background:var(--cyan);box-shadow:0 0 10px var(--cyan);
     transform:rotate(45deg);display:inline-block;animation:blink 2.4s ease-in-out infinite}
 
-
   /* 首页联系方式 */
   .contact{display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;margin-top:24px;
     font-family:var(--mono);font-size:9.5px;letter-spacing:.05em}
@@ -211,7 +210,7 @@
   .note{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--mute);max-width:340px;text-align:right;line-height:1.9}
   @media(max-width:760px){.note{text-align:left}}
 
-  /* ---------- 工作经历（文字按文档排版；2026-11-19 改为铺满一屏：五段在剩余高度里均分） ---------- */
+  /* ---------- 工作经历（文字按文档排版；2026-11-19 改为铺满一屏：四段在剩余高度里均分） ---------- */
   .experience-section{display:flex;flex-direction:column;min-height:100vh;
     padding:clamp(66px,7.6vh,104px) 0 clamp(42px,5.4vh,76px);scroll-margin-top:74px}
   .experience-section > .wrap{width:100%;max-width:clamp(1120px,84vw,1880px);display:flex;flex-direction:column;flex:1}
@@ -285,7 +284,6 @@
                linear-gradient(90deg,rgba(125,211,252,.05) 1px,transparent 1px) 0 0/34px 100%;
     animation:riGrid 3.05s ease both;animation-play-state:paused}
 
-
   .reel-bumper .ri-ring{position:absolute;width:min(52%,420px);aspect-ratio:1;border:1px solid rgba(255,61,107,.22);border-radius:50%;pointer-events:none;
     animation:riRing 3.05s cubic-bezier(.2,.7,.2,1) both;animation-play-state:paused}
   .reel-bumper .ri-ring::before,.reel-bumper .ri-ring::after{content:"";position:absolute;inset:14%;border:1px dashed rgba(125,211,252,.18);border-radius:50%}
@@ -350,7 +348,6 @@
   .tool .sub{font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;color:var(--gold);margin-top:6px;text-transform:uppercase}
   .tool p{font-size:12px;color:var(--sub);line-height:1.8;margin-top:12px;min-height:46px}
   .tool .chip{display:inline-block;margin-top:16px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--mute);border:1px solid var(--line);padding:3px 9px}
-
 
   /* ---------- 简历 ---------- */
   .rdl{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;
@@ -880,7 +877,7 @@
     <div class="sec-head reveal">
       <div>
         <div class="idx">03 / EXPERIENCE</div>
-        <h2>EXPERIENCE<small>工作经历 · 2020 — 至今</small></h2>
+        <h2>EXPERIENCE<small>工作经历 · 2021 — 至今</small></h2>
       </div>
       <div class="note">电影 / CG / 剧集 30+ 部<br>影视特效 · Houdini FX</div>
     </div>
@@ -923,13 +920,7 @@
         </div>
       </article>
 
-      <article class="exp-item reveal">
-        <div class="exp-when">2020.10 — 2021.08<em>0Y10M</em></div>
-        <div class="exp-body">
-          <h3>成都超越片场摄影设备租赁有限公司<span>摄影助理</span></h3>
-          <p class="exp-desc">配合灯光师、摄影师完成现场拍摄的辅助工作，熟悉实拍流程与镜头语言。</p>
-        </div>
-      </article>
+      
     </div>
   </div>
 </section>
@@ -947,6 +938,24 @@
 <script src="demo_media/brand/thankyou_paths.js"></script>
 <script>
 const Q = new URLSearchParams(location.search);
+/* 图片里真实墨迹占整张图的比例（对 alpha 通道量出来的，换图要重测）。
+   描边动画（首页字标 / 片头 / 片尾）必须对齐这个内框，否则描边会整体偏小或偏移。 */
+const INK_LOGO   = { x: 0.0088, y: 0.0261, w: 0.9833, h: 0.9477 };  // logo_colored.png  2036×612
+const INK_THANKS = { x: 0.0400, y: 0.0140, w: 0.8867, h: 0.9604 };  // thankyou.png      1500×429
+/* 直接从路径数据算包围盒：片头/片尾容器经常是 display:none，getBBox() 会返回 0 */
+function pathsBBox(list){
+  var x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity, n, i, x, y;
+  for (var k = 0; k < list.length; k++) {
+    n = String(list[k].d).match(/-?\d+\.?\d*/g) || [];
+    for (i = 0; i + 1 < n.length; i += 2) {
+      x = +n[i]; y = +n[i + 1];
+      if (x < x0) x0 = x; if (x > x1) x1 = x;
+      if (y < y0) y0 = y; if (y > y1) y1 = y;
+    }
+  }
+  if (!isFinite(x0)) return null;
+  return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
+}
 if (Q.has('noanim')) document.body.classList.add('no-anim');
 if (Q.has('test')) document.body.classList.add('test');
 
@@ -1286,6 +1295,13 @@ function $$(s){ return [...document.querySelectorAll(s)]; }
     });
     box.appendChild(svg);
     mark.appendChild(box);
+    /* 对齐：viewBox 用路径包围盒 + 描边层内缩到图片真实墨迹框（2026-11-19 修） */
+    var bb = pathsBBox(window.LOGO_PATHS);
+    if (bb) svg.setAttribute('viewBox', bb.x + ' ' + bb.y + ' ' + bb.w + ' ' + bb.h);
+    box.style.left = (INK_LOGO.x * 100) + '%';
+    box.style.top = (INK_LOGO.y * 100) + '%';
+    box.style.width = (INK_LOGO.w * 100) + '%';
+    box.style.height = (INK_LOGO.h * 100) + '%';
     items.forEach(function (it) {
       it.len = it.el.getTotalLength() || 100;
       it.el.style.strokeDasharray = it.len.toFixed(1);
@@ -1313,6 +1329,12 @@ function $$(s){ return [...document.querySelectorAll(s)]; }
     });
     box.appendChild(svg);
     thanks.appendChild(box);
+    var bb2 = pathsBBox(window.THANKYOU_PATHS);
+    if (bb2) svg.setAttribute('viewBox', bb2.x + ' ' + bb2.y + ' ' + bb2.w + ' ' + bb2.h);
+    box.style.left = (INK_THANKS.x * 100) + '%';
+    box.style.top = (INK_THANKS.y * 100) + '%';
+    box.style.width = (INK_THANKS.w * 100) + '%';
+    box.style.height = (INK_THANKS.h * 100) + '%';
     items.forEach(function (it) {
       it.len = it.el.getTotalLength() || 100;
       it.el.style.strokeDasharray = it.len.toFixed(1);
@@ -1655,7 +1677,11 @@ function $$(s){ return [...document.querySelectorAll(s)]; }
 
   function clearTimers(){ timers.forEach(clearTimeout); timers = []; }
   // 用 rect 计算覆盖层位置（缩放 / 断点 / 字体加载后都准确）
-  function overlayBox(){
+  /* logo_colored.png 里墨迹占整张图的比例（对 alpha 通道量出来的，换图要重测）。
+     描边层只有对齐到这个内框，才会和最终图重合；对齐整张图会偏大一圈。 */
+  var INK = INK_LOGO;
+
+  function fullBox(){
     var r = logo.getBoundingClientRect();
     var sr = stage.getBoundingClientRect();
     return {
@@ -1663,6 +1689,16 @@ function $$(s){ return [...document.querySelectorAll(s)]; }
       top: (r.top - sr.top) + 'px',
       width: r.width + 'px',
       height: r.height + 'px'
+    };
+  }
+  function overlayBox(){
+    var r = logo.getBoundingClientRect();
+    var sr = stage.getBoundingClientRect();
+    return {
+      left: (r.left - sr.left + r.width * INK.x) + 'px',
+      top: (r.top - sr.top + r.height * INK.y) + 'px',
+      width: (r.width * INK.w) + 'px',
+      height: (r.height * INK.h) + 'px'
     };
   }
   function place(){
@@ -1726,6 +1762,15 @@ function $$(s){ return [...document.querySelectorAll(s)]; }
     }    fx.appendChild(svg);
     stage.appendChild(fx);
     place();
+    /* viewBox 必须用「路径自身的包围盒」，不能用图片像素尺寸：
+       路径是在 2036×612 画布上以 33,15 → 1946×540 的墨迹范围描出来的，
+       直接套图片尺寸会把描边整体缩小并偏移（2026-11-19 修复）。 */
+    try {
+      var bb = rootG.getBBox();
+      if (bb && bb.width > 1 && bb.height > 1) {
+        svg.setAttribute('viewBox', bb.x.toFixed(2) + ' ' + bb.y.toFixed(2) + ' ' + bb.width.toFixed(2) + ' ' + bb.height.toFixed(2));
+      }
+    } catch (e) {}
     builtW = w;
     groups.forEach(function (item) {
       var baseW = { bleed: 6, main: 2.8, core: 1.3, cy: 2.2, mg: 2.2 };
@@ -1749,7 +1794,7 @@ function $$(s){ return [...document.querySelectorAll(s)]; }
 
   var clones = null;
   function placeBox(el){
-    var b = overlayBox();
+    var b = fullBox();   /* 故障克隆是整张图，要用整框 */
     el.style.left = b.left; el.style.top = b.top;
     el.style.width = b.width; el.style.height = b.height;
   }
