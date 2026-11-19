@@ -2,7 +2,7 @@
 <html lang="zh-CN"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!--T:page.title--><title>ZHOU HAIBIN — FX / Showreel</title><!--/T:page.title-->
+<title>ZHOU HAIBIN — FX / Showreel</title>
 <meta name="description" content="周海斌 — 影视特效 / Houdini FX，5 年影视特效经验，参与《流浪地球3》《哪吒之魔童闹海》《三国的星空》《灵笼2》等 30+ 影视与 CG 项目。">
 <style>
   :root{
@@ -27,16 +27,17 @@
   nav{position:fixed;top:0;left:0;right:0;z-index:100;transition:background .3s,border-color .3s}
   nav.scrolled{background:rgba(5,6,10,.78);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
   .nav-in{max-width:var(--maxw);margin:0 auto;padding:17px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-  .brand{display:flex;align-items:center;gap:14px}
-  .logo{font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.24em}
+  .logo{font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.24em;position:relative}
   .logo b{color:var(--red)}
-  .nav-links{display:flex;gap:36px;align-items:center}
-  .nav-links a{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--sub);position:relative;transition:color .2s}
-  .nav-links a i{font-style:normal;color:var(--red);font-size:9px;margin-right:7px;letter-spacing:0}
-  .nav-links a::after{content:"";position:absolute;left:0;bottom:-7px;width:0;height:1px;background:var(--red);transition:width .25s}
-  .nav-links a:hover,.nav-links a.active{color:var(--ink)}
-  .nav-links a.active::after{width:100%}
-  @media(max-width:760px){.nav-links{display:none}}
+  .logo i{font-style:normal;font-weight:400;font-size:9px;letter-spacing:0;color:var(--red);margin-right:9px;vertical-align:2px}
+  .logo::after{content:"";position:absolute;left:0;bottom:-7px;width:0;height:1px;background:var(--red);transition:width .25s}
+  .logo.active::after{width:100%}
+  .nav-a{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--sub);position:relative;transition:color .2s}
+  .nav-a i{font-style:normal;color:var(--red);font-size:9px;margin-right:7px;letter-spacing:0}
+  .nav-a::after{content:"";position:absolute;left:0;bottom:-7px;width:0;height:1px;background:var(--red);transition:width .25s}
+  .nav-a:hover,.nav-a.active{color:var(--ink)}
+  .nav-a.active::after{width:100%}
+  @media(max-width:760px){.nav-a{display:none}}
 
   /* ---------- 首屏 ---------- */
   .hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:132px 24px 96px;overflow:hidden;text-align:center}
@@ -211,6 +212,43 @@
   .note{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--mute);max-width:340px;text-align:right;line-height:1.9}
   @media(max-width:760px){.note{text-align:left}}
 
+  /* ---------- 工作经历（文字按文档排版；2026-11-19 改为铺满一屏：五段在剩余高度里均分） ---------- */
+  .experience-section{display:flex;flex-direction:column;min-height:100vh;
+    padding:clamp(66px,7.6vh,104px) 0 clamp(42px,5.4vh,76px);scroll-margin-top:74px}
+  .experience-section > .wrap{width:100%;max-width:clamp(1120px,84vw,1880px);display:flex;flex-direction:column;flex:1}
+  .experience-section .sec-head{margin-bottom:clamp(8px,1.2vh,18px);flex:0 0 auto}
+  .exp{flex:1;display:flex;flex-direction:column;justify-content:space-between}
+  .exp-item{display:grid;grid-template-columns:clamp(118px,9vw,176px) 1fr;gap:0 clamp(26px,2.2vw,46px);
+    padding:clamp(16px,2vh,30px) 0;border-top:1px solid var(--line)}
+  .exp-item:first-child{border-top:0;padding-top:clamp(6px,1vh,14px)}
+  .exp-when{font-family:var(--mono);font-size:clamp(11.5px,.76vw,13px);letter-spacing:.08em;color:var(--sub);
+    line-height:1.5;padding-top:4px;white-space:nowrap;align-self:start}
+  .exp-when em{display:block;font-style:normal;font-size:clamp(10px,.66vw,11.5px);letter-spacing:.14em;color:var(--mute);margin-top:4px}
+  .exp-item.now .exp-when{color:var(--red)}
+  .exp-body h3{font-size:clamp(18px,1.14vw,22px);font-weight:700;letter-spacing:.02em;line-height:1.45}
+  .exp-body h3 span{font-family:var(--mono);font-size:clamp(10.5px,.74vw,12px);font-weight:400;letter-spacing:.18em;color:var(--red);
+    margin-left:12px;padding-left:12px;border-left:1px solid var(--line2)}
+  .exp-row{display:flex;gap:clamp(12px,.95vw,17px);margin-top:clamp(6px,.85vh,11px)}
+  .exp-row b{flex:0 0 clamp(34px,2.6vw,46px);font-family:var(--mono);font-size:clamp(10px,.68vw,11.5px);font-weight:400;letter-spacing:.18em;
+    color:var(--mute);padding-top:5px}
+  .exp-row p,.exp-desc{flex:1;font-size:clamp(14px,.9vw,16px);line-height:1.78;color:#b7becd;text-wrap:pretty}
+  .exp-desc{margin-top:clamp(6px,.85vh,11px)}
+  .tt{white-space:nowrap}
+  @media(max-width:1080px){
+    .experience-section > .wrap{max-width:var(--maxw)}
+    .exp{justify-content:flex-start}
+  }
+  @media(max-width:760px){
+    .experience-section{min-height:0;padding:70px 0 80px}
+    .exp-item{grid-template-columns:1fr;gap:10px;padding:24px 0}
+    .exp-when{display:flex;align-items:baseline;gap:10px;padding-top:0}
+    .exp-when em{margin-top:0}
+    .exp-body h3{font-size:16.5px}
+    .exp-body h3 span{display:block;margin:5px 0 0;padding:0;border:0}
+    .exp-row{gap:10px}
+    .exp-row b{flex:0 0 30px;font-size:9.5px;padding-top:4px}
+    .exp-row p,.exp-desc{font-size:13.5px}
+  }
   /* ---------- Showreel（统一时间轴：片头→正片→片尾，共用一条进度条） ---------- */
   /* 聚焦视频：本区块加宽、收紧留白，让播放器成为绝对视觉中心 */
   .showreel-section{padding:52px 0 64px}
@@ -610,20 +648,16 @@
 </style>
 <noscript><style>.bm-stage .wm{opacity:1 !important}</style></noscript>
 </head>
-<body data-dr-region-count="10" data-dr-key-count="14">
+<body>
 
 <div class="beam" aria-hidden="true"></div>
 <div class="deco" id="deco" aria-hidden="true"><i class="dot" style="left: 98.93%; top: 76.58%; width: 2.7px; height: 2.7px; --t: 15.0s; --dl: -4.8s;"></i><i class="dot" style="left: 28.52%; top: 70.18%; width: 3.2px; height: 3.2px; --t: 16.1s; --dl: -9.2s;"></i><i class="dot" style="left: 80.85%; top: 73.24%; width: 3.4px; height: 3.4px; --t: 18.7s; --dl: -5.5s;"></i><i class="dot" style="left: 51.07%; top: 76.94%; width: 2.4px; height: 2.4px; --t: 23.7s; --dl: -3.1s;"></i><i class="dot" style="left: 53.05%; top: 34.48%; width: 2.5px; height: 2.5px; --t: 25.5s; --dl: -23.7s;"></i><i class="dot" style="left: 4.37%; top: 90.99%; width: 2.5px; height: 2.5px; --t: 25.7s; --dl: -20.8s;"></i><i class="dot" style="left: 61.04%; top: 71.99%; width: 1.9px; height: 1.9px; --t: 24.4s; --dl: -5.8s;"></i><i class="dot" style="left: 51.21%; top: 35.74%; width: 3px; height: 3px; --t: 18.9s; --dl: -2.2s;"></i><i class="dot" style="left: 37.72%; top: 11.42%; width: 3.1px; height: 3.1px; --t: 22.1s; --dl: -11.2s;"></i><i class="dot" style="left: 39.82%; top: 16.73%; width: 3.4px; height: 3.4px; --t: 18.9s; --dl: -19.3s;"></i><i class="dot" style="left: 27.44%; top: 64.22%; width: 2.1px; height: 2.1px; --t: 20.2s; --dl: -8.2s;"></i><i class="dot" style="left: 67.37%; top: 46.39%; width: 1.8px; height: 1.8px; --t: 14.1s; --dl: -16.4s;"></i><i class="dot" style="left: 38.15%; top: 76.57%; width: 2.6px; height: 2.6px; --t: 19.1s; --dl: -7.7s;"></i><i class="dot" style="left: 93.52%; top: 44.62%; width: 2.4px; height: 2.4px; --t: 20.4s; --dl: -8.3s;"></i><i class="dot" style="left: 46.91%; top: 63.93%; width: 1.5px; height: 1.5px; --t: 18.9s; --dl: -19.3s;"></i><i class="dot" style="left: 17.52%; top: 29.29%; width: 2.2px; height: 2.2px; --t: 19.7s; --dl: -8.5s;"></i><i class="dot" style="left: 4.13%; top: 32.24%; width: 3.3px; height: 3.3px; --t: 21.5s; --dl: -6.0s;"></i><i class="dot" style="left: 7.78%; top: 47.65%; width: 2.1px; height: 2.1px; --t: 13.3s; --dl: -0.7s;"></i><i class="dot" style="left: 23.42%; top: 58.83%; width: 3.1px; height: 3.1px; --t: 19.3s; --dl: -2.2s;"></i><i class="dot" style="left: 5.72%; top: 21.16%; width: 3.6px; height: 3.6px; --t: 21.9s; --dl: -5.9s;"></i><i class="dot" style="left: 67.78%; top: 34.36%; width: 2.6px; height: 2.6px; --t: 22.9s; --dl: -19.8s;"></i><i class="dot" style="left: 10.67%; top: 79.61%; width: 3px; height: 3px; --t: 21.1s; --dl: -0.5s;"></i><i class="dot" style="left: 95.72%; top: 9.45%; width: 2.1px; height: 2.1px; --t: 22.9s; --dl: -2.4s;"></i><i class="dot" style="left: 82.81%; top: 48.59%; width: 3px; height: 3px; --t: 18.4s; --dl: -11.8s;"></i><i class="dot" style="left: 49.05%; top: 29.33%; width: 2.5px; height: 2.5px; --t: 21.1s; --dl: -13.6s;"></i><i class="dot" style="left: 16.53%; top: 85.74%; width: 3.6px; height: 3.6px; --t: 18.8s; --dl: -10.4s;"></i><i class="cross" style="left: 70.59%; top: 57.87%; width: 5px; height: 5px; --t: 5.5s; animation-delay: -1.2s;"></i><i class="cross" style="left: 52.82%; top: 74.7%; width: 11px; height: 11px; --t: 5.1s; animation-delay: -3.9s;"></i><i class="cross" style="left: 21.23%; top: 67.67%; width: 7px; height: 7px; --t: 5.2s; animation-delay: -2.7s;"></i><i class="cross" style="left: 42%; top: 10.23%; width: 6px; height: 6px; --t: 5.5s; animation-delay: -1.9s;"></i><i class="cross" style="left: 26.57%; top: 40.61%; width: 12px; height: 12px; --t: 3.8s; animation-delay: -2.9s;"></i><i class="cross" style="left: 37.67%; top: 59.32%; width: 8px; height: 8px; --t: 4.0s; animation-delay: -2.9s;"></i><i class="cross" style="left: 59.28%; top: 39.26%; width: 11px; height: 11px; --t: 7.0s; animation-delay: -3s;"></i><i class="cross" style="left: 29.31%; top: 23.69%; width: 10px; height: 10px; --t: 5.9s; animation-delay: -3.1s;"></i><i class="cross" style="left: 71.22%; top: 35.23%; width: 10px; height: 10px; --t: 3.8s; animation-delay: -3.7s;"></i><i class="dia" style="left: 78.12%; top: 27.08%; width: 15px; height: 15px; --t: 35.6s;"></i><i class="dia" style="left: 22.53%; top: 68.02%; width: 15px; height: 15px; --t: 33.0s;"></i><i class="dia" style="left: 36.85%; top: 67.73%; width: 15px; height: 15px; --t: 34.1s;"></i></div>
 
 <nav id="nav" class="scrolled">
   <div class="nav-in">
-    <div class="brand">
-      <a class="logo" href="#top">ZHB<b>.</b>FX</a>
-    </div>
-    <div class="nav-links">
-      <a href="#top" data-sec="top" class=""><i>01</i>HOME</a>
-      <a href="#showreel" data-sec="showreel" class=""><i>02</i>SHOWREEL</a>
-    </div>
+    <a class="logo" href="#top" data-sec="top"><i>01</i>ZHB<b>.</b>FX</a>
+    <a class="nav-a" href="#showreel" data-sec="showreel"><i>02</i>SHOWREEL</a>
+    <a class="nav-a" href="#experience" data-sec="experience"><i>03</i>EXPERIENCE</a>
   </div>
 </nav>
 
@@ -676,7 +710,6 @@
   <div class="frame" aria-hidden="true"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i></div>
 
   <div class="hero-in">
-    <div class="eyebrow" data-dr-keys="hero.eyebrow" spellcheck="false"><span class="dot"></span><!--T:hero.eyebrow-->HOUDINI FX · 影视特效<!--/T:hero.eyebrow--></div>
 
     <div class="bm" id="brandmark">
       <div class="bm-hud"><span>FX_SEQ // 07</span><span><b>●</b> SIGNAL LOCKED</span></div>
@@ -688,20 +721,20 @@
         <span class="bm-c bl" aria-hidden="true"></span><span class="bm-c br" aria-hidden="true"></span>
       </div>
       <div class="bm-sub">
-        <span class="zh" data-dr-keys="hero.sub_zh" spellcheck="false"><!--T:hero.sub_zh-->周海斌<!--/T:hero.sub_zh--></span>
+        <span class="zh">周海斌</span>
         <span class="sq" aria-hidden="true"></span>
-        <span data-dr-keys="hero.sub_en" spellcheck="false" class=""><!--T:hero.sub_en-->ZHOU HAIBIN<!--/T:hero.sub_en--></span>
+        <span>ZHOU HAIBIN</span>
         <span class="sq" aria-hidden="true"></span>
-        <span class="gold" data-dr-keys="hero.sub_role" spellcheck="false"><!--T:hero.sub_role-->HOUDINI FX<!--/T:hero.sub_role--></span>
+        <span class="gold">HOUDINI FX</span>
         <span class="barcode" aria-hidden="true"></span>
       </div>
     </div>
 
-    <p class="role" data-dr-keys="hero.role_body,hero.role_skills" spellcheck="false"><b data-dr-keys="hero.role_lead" spellcheck="false" class=""><!--T:hero.role_lead-->5 年影视特效制作经验<!--/T:hero.role_lead--></b><span class="sep">/</span><!--T:hero.role_body-->参与电影 · CG · 剧集 30+ 部<!--/T:hero.role_body--><br><!--T:hero.role_skills-->Houdini · VEX · Python · AI — 模拟 / 特效开发<!--/T:hero.role_skills--></p>
-    <div class="stats" id="stats" data-dr-keys="hero.stat1,hero.stat2,hero.stat3" spellcheck="false">
-      <!--T:hero.stat1--><div class="stat"><b class="n" data-count="5">5</b><em>+</em><span class="lab">YEARS / 经验</span></div><!--/T:hero.stat1-->
-      <!--T:hero.stat2--><div class="stat"><b class="n" data-count="30">30</b><em>+</em><span class="lab">PROJECTS / 作品</span></div><!--/T:hero.stat2-->
-      <!--T:hero.stat3--><div class="stat"><b class="n" data-count="8">8</b><em>+</em><span class="lab">TOOLS / 工具</span></div><!--/T:hero.stat3-->
+    <p class="role"><b>5 年影视特效制作经验</b><span class="sep">/</span>参与电影 · CG · 剧集 30+ 部<br>Houdini · VEX · Python · UE5 · AI — 模拟 / 特效开发</p>
+    <div class="stats" id="stats">
+      <div class="stat"><b class="n" data-count="5">5</b><em>+</em><span class="lab">YEARS / 经验</span></div>
+      <div class="stat"><b class="n" data-count="30">30</b><em>+</em><span class="lab">PROJECTS / 作品</span></div>
+      <div class="stat"><b class="n" data-count="8">8</b><em>+</em><span class="lab">TOOLS / 工具</span></div>
     </div>
     <div class="cta">
       <button class="btn primary" id="heroPlay">
@@ -710,9 +743,9 @@
       <a class="btn gold" href="https://gitcode.com/Abin169/HouTools_zhb" target="_blank" rel="noopener">HOUTOOLS ↗</a>
       
     </div>
-    <div class="contact" data-dr-keys="hero.contact_mail,hero.contact_tel" spellcheck="false">
-      <!--T:hero.contact_mail--><a data-dr-href="mailto:1697619277@qq.com"><i>MAIL</i>1697619277@qq.com</a><!--/T:hero.contact_mail-->
-      <!--T:hero.contact_tel--><a data-dr-href="tel:15919478293"><i>TEL</i>159 1947 8293</a><!--/T:hero.contact_tel-->
+    <div class="contact">
+      <a href="mailto:1697619277@qq.com"><i>MAIL</i>1697619277@qq.com</a>
+      <a href="tel:15919478293"><i>TEL</i>159 1947 8293</a>
     </div>
   </div>
 </header>
@@ -721,8 +754,8 @@
   <div class="wrap">
     <div class="sec-head reveal in">
       <div>
-        <div class="idx">01 / SHOWREEL</div>
-        <h2>SHOWREEL<small data-dr-keys="showreel.sub" spellcheck="false" class=""><!--T:showreel.sub-->精选镜头混剪 · 点击播放<!--/T:showreel.sub--></small></h2>
+        <div class="idx">02 / SHOWREEL</div>
+        <h2>SHOWREEL<small>精选镜头混剪 · 点击播放</small></h2>
       </div>
     </div>
     <div class="player reveal in bump-intro" id="player">
@@ -781,10 +814,69 @@
   </div>
 </section>
 
+<section class="blk experience-section" id="experience">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <div class="idx">03 / EXPERIENCE</div>
+        <h2>EXPERIENCE<small>工作经历 · 2020 — 至今</small></h2>
+      </div>
+      <div class="note">电影 / CG / 剧集 30+ 部<br>影视特效 · Houdini FX</div>
+    </div>
+
+    <div class="exp">
+      <article class="exp-item now reveal">
+        <div class="exp-when">2025.02 — 至今<em>1Y10M</em></div>
+        <div class="exp-body">
+          <h3>成都三素艺合数字科技有限公司<span>影视特效</span></h3>
+          <div class="exp-row"><b>电影</b><p><span class="tt">《流浪地球3》</span><span class="tt">《北回归线以北》</span><span class="tt">《爆水管》</span><span class="tt">《特立独行》</span><span class="tt">《群星闪耀时》</span><span class="tt">《谎言之躯》</span><span class="tt">《三国的星空》</span><span class="tt">《生还》</span><span class="tt">《魔方小姐》</span><span class="tt">《观心》</span></p></div>
+          <div class="exp-row"><b>CG</b><p><span class="tt">《凡应》</span>、<span class="tt">《永劫无间》</span><span class="tt">「巫真」</span>、<span class="tt">《炉石传说》</span><span class="tt">「大地的裂变」</span>、<span class="tt">《明日方舟：终末地》</span><span class="tt">「莱万汀」</span></p></div>
+          <div class="exp-row"><b>剧集</b><p><span class="tt">《明日乐园》</span><span class="tt">《明月苍茫》</span><span class="tt">《万古最强宗》</span><span class="tt">《逍遥》</span><span class="tt">《月鳞绮纪》</span><span class="tt">《子夜归》</span><span class="tt">《小城良方》</span><span class="tt">《星月征途》</span><span class="tt">《少侠逆袭攻略》</span><span class="tt">《灵笼2》</span></p></div>
+        </div>
+      </article>
+
+      <article class="exp-item reveal">
+        <div class="exp-when">2024.07 — 2025.01<em>0Y7M</em></div>
+        <div class="exp-body">
+          <h3>成都千鸟文化传播有限公司<span>影视特效</span></h3>
+          <div class="exp-row"><b>电影</b><p><span class="tt">《哪吒之魔童闹海》</span></p></div>
+          <div class="exp-row"><b>CG</b><p><span class="tt">《王者荣耀》</span><span class="tt">「敬我三分」</span><span class="tt">「天元」</span>、<span class="tt">《七日世界》</span><span class="tt">「雪国人生」</span>、<span class="tt">《漫威争锋》</span><span class="tt">「永夜降临」</span></p></div>
+        </div>
+      </article>
+
+      <article class="exp-item reveal">
+        <div class="exp-when">2022.04 — 2024.07<em>2Y3M</em></div>
+        <div class="exp-body">
+          <h3>华强方特（深圳）电影有限公司<span>影视特效</span></h3>
+          <div class="exp-row"><b>内部</b><p><span class="tt">《生命之光》</span><span class="tt">《大道巍峨》</span><span class="tt">《梁祝》</span><span class="tt">《水岸梦境》</span><span class="tt">《古越情歌》</span></p></div>
+          <div class="exp-row"><b>电影</b><p><span class="tt">《守龙者》</span><span class="tt">《火锅艺术家》</span></p></div>
+          <div class="exp-row"><b>剧集</b><p><span class="tt">《九部的检察官》</span><span class="tt">《春花焰》</span></p></div>
+        </div>
+      </article>
+
+      <article class="exp-item reveal">
+        <div class="exp-when">2021.09 — 2022.04<em>0Y7M</em></div>
+        <div class="exp-body">
+          <h3>墨境天育职业技能培训<span>影视特效</span></h3>
+          <p class="exp-desc">系统学习 Houdini、Nuke、Maya 等软件，完成特效基础与流程训练。</p>
+        </div>
+      </article>
+
+      <article class="exp-item reveal">
+        <div class="exp-when">2020.10 — 2021.08<em>0Y10M</em></div>
+        <div class="exp-body">
+          <h3>成都超越片场摄影设备租赁有限公司<span>摄影助理</span></h3>
+          <p class="exp-desc">配合灯光师、摄影师完成现场拍摄的辅助工作，熟悉实拍流程与镜头语言。</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
 <footer>
   <div class="wrap">
-    <div class="note2" data-dr-keys="foot.note" spellcheck="false">
-      <!--T:foot.note-->* 静态单文件页面 · 海报来自豆瓣 / B站 / Steam<i class="nw">（仅作个人作品集展示，版权归原方）</i><!--/T:foot.note-->
+    <div class="note2">
+      * 静态单文件页面 · 海报来自豆瓣 / B站 / Steam<i class="nw">（仅作个人作品集展示，版权归原方）</i>
     </div>
   </div>
 </footer>
@@ -838,6 +930,7 @@ const DATA = {
     { k:'xiaochengliangfang',n:'小城良方', t:'剧集 · 2026' },
     { k:'shaoxiajixi',       n:'少侠逆袭攻略', t:'剧集 · 2026' },
     { k:'mofangxiaojie',     n:'魔方小姐', t:'电影 · 2026' },
+    { k:'guanxin',           n:'观心', t:'电影 · 2026', url:'https://baike.baidu.com/item/%E8%A7%82%E5%BF%83/67078381' },
     { k:'xingyuezhengtu',    n:'星月征途', t:'剧集 · 2026' }
   ],
   tools: [
@@ -869,8 +962,8 @@ const ICONS = {
 /* ---------- 首屏海报带：一根传送带，上排向右、下排向左，卡片在两头换边 ---------- */
 /* ---------- 首屏海报带：上排向右、下排向左，卡片从自己这排的尾巴回到入口 ---------- */
 (function buildStrips(){
-  const works = DATA.heroWorks;
-  const P = works.length;
+  let works = DATA.heroWorks;
+  let P = works.length;
   const SPEED = 42;                                   // px/秒，两条带子同速
   const PER = 17;                                     // 每排目标张数（密度基准）
   let GAP = 14;
@@ -881,7 +974,7 @@ const ICONS = {
   const preload = () => Promise.all(works.map(w => new Promise(done => {
     const im = new Image();
     im.onload = () => { ASPECT.set(w.k, (im.naturalWidth / im.naturalHeight) || 0.7); done(); };
-    im.onerror = () => { ASPECT.set(w.k, 0.7); done(); };
+    im.onerror = () => { ASPECT.set(w.k, 0); done(); };   // 0 = 缺图，建带子时跳过
     im.src = `demo_media/hero/${w.k}.jpg`;
   })));
 
@@ -896,7 +989,7 @@ const ICONS = {
     const a = document.createElement('a');
     a.className = 'poster';
     a.style.width = cardW(w.k).toFixed(2) + 'px';
-    a.href = `demo_media/hero/${w.k}.jpg`;
+    a.href = w.url || `demo_media/hero/${w.k}.jpg`;
     a.target = '_blank';
     a.rel = 'noopener';
     a.dataset.k = w.k;
@@ -941,7 +1034,7 @@ const ICONS = {
     card.dataset.k = w.k;
     card.dataset.name = w.n;
     card.setAttribute('aria-label', w.n);
-    card.href = `demo_media/hero/${w.k}.jpg`;
+    card.href = w.url || `demo_media/hero/${w.k}.jpg`;
     const im = card.querySelector('img');
     im.src = `demo_media/hero/${w.k}.jpg`;
     im.alt = w.n;
@@ -1017,6 +1110,9 @@ const ICONS = {
   };
 
   preload().then(() => {
+    works = works.filter(w => ASPECT.get(w.k) > 0);   // 素材缺图的直接不参与轮播（不出现空卡）
+    P = works.length;
+    if (!P) return;
     build();
     layout();
     ready = true;
@@ -1415,8 +1511,8 @@ function $$(s){ return [...document.querySelectorAll(s)]; }
 /* ---------- 交互 ---------- */
 (function initNav(){
   const nav = $('#nav');
-  const secs = ['top','showreel'].map(id => document.getElementById(id));
-  const links = [...document.querySelectorAll('.nav-links a')];
+  const secs = ['top','showreel','experience'].map(id => document.getElementById(id));
+  const links = [...document.querySelectorAll('.nav-a, .logo[data-sec]')];
   const sync = () => {
     nav.classList.toggle('scrolled', scrollY > 12);
     const y = scrollY + 140;
@@ -1431,6 +1527,7 @@ function $$(s){ return [...document.querySelectorAll(s)]; }
 (function deco(){
   const box = document.getElementById('deco');
   if (!box || Q.has('noanim')) return;
+  box.innerHTML = '';      // 清掉上次保存烘焙进来的点，避免每次加载翻倍
   let s = 20261113;
   const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
   const add = (cls, css) => { const el = document.createElement('i'); el.className = cls; el.style.cssText = css; box.appendChild(el); };
