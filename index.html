@@ -1214,6 +1214,7 @@ const ICONS = {
   $$('.stat .n').forEach(el => {
     const target = +el.dataset.count;
     if (reduced) { el.textContent = target; return; }
+    el.textContent = '0';                 // 先归零：首帧别闪一下最终值（2026-11-27）
     let start = null, dur = 1400;
     const step = ts => {
       if (!start) start = ts;
